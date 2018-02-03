@@ -15,12 +15,30 @@ defmodule FRT do
 
   """
   def of(relation, set) do
+    unique(frt(relation, set))
+  end
+
+  defp unique(list) do
+    case list do
+      [] -> []
+      [head | tail] -> [head] ++ unique(remove_duplicates_of(head, tail))
+    end
+  end
+
+  defp remove_duplicates_of(elem, list) do
+    case list do
+      [] -> []
+      [^elem | tail] -> remove_duplicates_of(elem, tail)
+      [head | tail] -> [head] ++ remove_duplicates_of(elem, tail)
+    end
+  end
+
+  defp frt(relation, set) do
     case set do
       [] -> []
       [head | tail] ->
-        Enum.uniq(
-          transitive_reflexive_for_value(relation, relation, head, head) ++
-          of(relation, tail))
+        transitive_reflexive_for_value(relation, relation, head, head) ++
+        frt(relation, tail)
     end
   end
 
