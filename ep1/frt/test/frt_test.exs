@@ -50,4 +50,30 @@ defmodule FRTTest do
     assert Enum.sort(Keyword.get_values(frt, :t)) == [:t]
     assert length(frt) == 4
   end
+
+  test "loop" do
+    frt = FRT.of([{:a, :b}, {:b, :c}, {:c, :a}], [:a, :b, :c])
+    assert Enum.sort(Keyword.get_values(frt, :a)) == [:a, :b, :c]
+    assert Enum.sort(Keyword.get_values(frt, :b)) == [:a, :b, :c]
+    assert Enum.sort(Keyword.get_values(frt, :c)) == [:a, :b, :c]
+    assert length(frt) == 9
+  end
+
+  test "separate parts" do
+    frt = FRT.of([{:h, :i}, {:j, :k}], [:h, :i, :j, :k])
+    assert Enum.sort(Keyword.get_values(frt, :h)) == [:h, :i]
+    assert Enum.sort(Keyword.get_values(frt, :i)) == [:i]
+    assert Enum.sort(Keyword.get_values(frt, :j)) == [:j, :k]
+    assert Enum.sort(Keyword.get_values(frt, :k)) == [:k]
+    assert length(frt) == 6
+  end
+
+  test "single origin" do
+    frt = FRT.of([{:w, :x}, {:w, :y}, {:w, :z}], [:w, :x, :y, :z])
+    assert Enum.sort(Keyword.get_values(frt, :w)) == [:w, :x, :y, :z]
+    assert Enum.sort(Keyword.get_values(frt, :x)) == [:x]
+    assert Enum.sort(Keyword.get_values(frt, :y)) == [:y]
+    assert Enum.sort(Keyword.get_values(frt, :z)) == [:z]
+    assert length(frt) == 7
+  end
 end
