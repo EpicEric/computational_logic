@@ -1,4 +1,4 @@
-# FRT
+# RTC
 
 Verify that this assignment works:
 

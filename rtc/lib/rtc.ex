@@ -1,4 +1,4 @@
-defmodule FRT do
+defmodule RTC do
   @moduledoc """
   A reflexive transitive closure module.
   """
@@ -6,16 +6,19 @@ defmodule FRT do
   @doc """
   Receives a binary relation R and the set A such that R ⊆ A × A,
   and returns the reflexive transitive closure of R on A.
-  The order of elements in the closure has no relevance.
+  The elements in the returned closure have no order.
+
+  ## Parameters
+    - relation: the binary relation R as a list of tuples of atoms
+    - set: the set A as a list of atoms
 
   ## Examples
-
-      iex> FRT.of([{:a, :b}, {:b, :c}], [:a, :b, :c])
+      iex> RTC.of([{:a, :b}, {:b, :c}], [:a, :b, :c])
       [a: :a, a: :b, a: :c, b: :b, b: :c, c: :c]
 
   """
   def of(relation, set) do
-    unique(frt(relation, set))
+    unique(rtc(relation, set))
   end
 
   defp unique(list) do
@@ -33,31 +36,31 @@ defmodule FRT do
     end
   end
 
-  defp frt(relation, set) do
+  defp rtc(relation, set) do
     case set do
       [] -> []
       [head | tail] ->
-        transitive_reflexive_for_value(relation, relation, head, head) ++
-        frt(relation, tail)
+        reflexive_transitive_for_value(relation, relation, head, head) ++
+        rtc(relation, tail)
     end
   end
 
-  defp transitive_reflexive_for_value(relation, current_relation, origin, current_element) do
+  defp reflexive_transitive_for_value(relation, current_relation, origin, current_element) do
     case current_relation do
       [] -> [{origin, current_element}]
       [head | tail] -> case head do
         {^current_element, value} ->
           case value do
             ^origin ->
-              transitive_reflexive_for_value(relation, tail, origin, current_element)
+              reflexive_transitive_for_value(relation, tail, origin, current_element)
             ^current_element ->
-              transitive_reflexive_for_value(relation, tail, origin, current_element)
+              reflexive_transitive_for_value(relation, tail, origin, current_element)
             _ ->
-              transitive_reflexive_for_value(relation, tail, origin, current_element) ++
-              transitive_reflexive_for_value(relation, relation, origin, value)
+              reflexive_transitive_for_value(relation, tail, origin, current_element) ++
+              reflexive_transitive_for_value(relation, relation, origin, value)
           end
         _ ->
-          transitive_reflexive_for_value(relation, tail, origin, current_element)
+          reflexive_transitive_for_value(relation, tail, origin, current_element)
       end
     end
   end
