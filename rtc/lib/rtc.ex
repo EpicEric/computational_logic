@@ -6,7 +6,7 @@ defmodule RTC do
   @doc """
   Receives a binary relation R and the set A such that R ⊆ A × A,
   and returns the reflexive transitive closure of R on A.
-  The elements in the returned closure have no order.
+  The elements in the returned closure are ordered.
 
   ## Parameters
     - relation: the binary relation R as a list of tuples of atoms
@@ -18,21 +18,44 @@ defmodule RTC do
 
   """
   def of(relation, set) do
-    unique(rtc(relation, set))
+    rtc(relation, set) |> unique() |> sort()
   end
 
-  defp unique(list) do
+  @doc """
+  Receives a list and returns the list with unique elements.
+
+  ## Parameters
+    - list: the input list
+
+  ## Examples
+      iex> RTC.unique([2, 1, 3, 1, 4, 3, 2, 5])
+      [2, 1, 3, 4, 5]
+
+  """
+  def unique(list) do
     case list do
       [] -> []
       [head | tail] -> [head] ++ unique(remove_duplicates_of(head, tail))
     end
   end
 
-  defp remove_duplicates_of(elem, list) do
+  @doc """
+  Receives a list and returns the sorted list through bubblesort.
+
+  ## Parameters
+    - list: the input list
+
+  ## Examples
+      iex> RTC.sort([2, 1, 3, 1, 4, 3, 2, 5])
+      [1, 1, 2, 2, 3, 3, 4, 5]
+
+  """
+  def sort(list) do
     case list do
       [] -> []
-      [^elem | tail] -> remove_duplicates_of(elem, tail)
-      [head | tail] -> [head] ++ remove_duplicates_of(elem, tail)
+      [head | tail] ->
+        {smallest, new_tail} = get_smallest_element(head, tail)
+        [smallest] ++ sort(new_tail)
     end
   end
 
@@ -62,6 +85,28 @@ defmodule RTC do
         _ ->
           reflexive_transitive_for_value(relation, tail, origin, current_element)
       end
+    end
+  end
+
+  defp remove_duplicates_of(elem, list) do
+    case list do
+      [] -> []
+      [^elem | tail] -> remove_duplicates_of(elem, tail)
+      [head | tail] -> [head] ++ remove_duplicates_of(elem, tail)
+    end
+  end
+
+  defp get_smallest_element(elem, list) do
+    case list do
+      [] -> {elem, list}
+      [head | tail] ->
+        if head < elem do
+          {smallest, new_tail} = get_smallest_element(head, tail)
+          {smallest, [elem] ++ new_tail}
+        else
+          {smallest, new_tail} = get_smallest_element(elem, tail)
+          {smallest, [head] ++ new_tail}
+        end
     end
   end
 end
