@@ -18,7 +18,7 @@ defmodule RTC do
 
   """
   def of(relation, set) do
-    rtc(relation, set) |> unique() |> sort()
+    rtc(relation, set, set) |> unique() |> sort()
   end
 
   @doc """
@@ -59,32 +59,42 @@ defmodule RTC do
     end
   end
 
-  defp rtc(relation, set) do
-    case set do
+  defp rtc(relation, set, current_set) do
+    case current_set do
       [] -> []
       [head | tail] ->
-        reflexive_transitive_for_value(relation, relation, head, head) ++
-        rtc(relation, tail)
+        reflexive_transitive_for_value(relation, set, relation, [head], head) ++
+        rtc(relation, set, tail)
     end
   end
 
-  defp reflexive_transitive_for_value(relation, current_relation, origin, current_element) do
+  defp reflexive_transitive_for_value(relation, set, current_relation, path, current_element) do
     case current_relation do
-      [] -> [{origin, current_element}]
-      [head | tail] -> case head do
-        {^current_element, value} ->
-          case value do
-            ^origin ->
-              reflexive_transitive_for_value(relation, tail, origin, current_element)
-            ^current_element ->
-              reflexive_transitive_for_value(relation, tail, origin, current_element)
-            _ ->
-              reflexive_transitive_for_value(relation, tail, origin, current_element) ++
-              reflexive_transitive_for_value(relation, relation, origin, value)
-          end
-        _ ->
-          reflexive_transitive_for_value(relation, tail, origin, current_element)
-      end
+      [] ->
+        [{first(path), current_element}]
+      [{^current_element, value} | tail] ->
+        if contains(value, path) or not contains(value, set) do
+          reflexive_transitive_for_value(relation, set, tail, path, current_element)
+        else
+          reflexive_transitive_for_value(relation, set, tail, path, current_element) ++
+          reflexive_transitive_for_value(relation, set, relation, path ++ [value], value)
+        end
+      [_ | tail] ->
+        reflexive_transitive_for_value(relation, set, tail, path, current_element)
+    end
+  end
+
+  defp first(list) do
+    case list do
+      [head | _] -> head
+    end
+  end
+
+  defp contains(elem, list) do
+    case list do
+      [] -> false
+      [^elem | _] -> true
+      [_ | tail] -> contains(elem, tail)
     end
   end
 

@@ -336,7 +336,6 @@
 
 
 
-
 % *** Do not adjust lengths that control margins, column widths, etc. ***
 % *** Do not use packages that alter fonts (such as pslatex).         ***
 % There should be no need to do such things with IEEEtran.cls V1.6 and later.
@@ -346,7 +345,6 @@
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
-
 
 \begin{document}
 %
@@ -484,11 +482,207 @@ Elixir, relação binária, fecho, reflexão, transitividade, recursão.
 lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
 lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
 lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+% Explicar o problema e como será utilizado o Elixir para solucioná-lo.
+% Falar sobre o Elixir, pattern matching, recursão.
 
+
+\section{Desenvolvimento}
+Para este projeto, decidimos evitar o uso de quaisquer funções da biblioteca
+padrão do Elixir. Alternativamente, como será apresentado na seção ``Algoritmo'',
+optamos por manualmente desenvolver funções auxiliares pelos princípios de
+recursão e \textit{pattern matching}.
+
+\subsubsection{Modelagem}
+Criamos o nosso módulo do Elixir, RTC, que irá criar um fecho reflexivo e
+transitivo (em inglês, ``\textit{reflexive transitive closure}'') a partir de
+uma relação binária $R$ e um conjunto $A$ tal que $R \subseteq A \times A$.
+Para isso, precisamos definir como será a modelagem de relações binárias e
+conjuntos no nosso sistema.
+
+Para fins de simplicidade, todas as estruturas serão representadas por listas,
+apesar de matematicamente não terem ordem. Portanto, o algoritmo não poderá fazer
+distinção entre dois conjuntos com mesmos elementos em ordens diferentes.
+
+Assim, decidimos utilizar uma lista de elementos para o conjunto, uma lista de
+duplas ordenadas para a relação binária, e qualquer símbolo do Elixir como
+elementos -- embora utilizaremos apenas átomos nos nossos testes. Por exemplo:
+
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+relation = [{:a, :b}, {:b, :c}]
+set = [:a, :b, :c]
+\end{verbatim}
+\endgroup
+
+\subsubsection{Algoritmo}
+A ideia que tivemos para o funcionamento do algoritmo é a de simplesmente varrer,
+um a um, os elementos do conjunto $A$. Para cada elemento, varreremos a relação
+de entrada, e verificaremos as tuplas onde o primeiro equivale ao elemento
+iterado atualmente, verificando então os elementos atingidos a partir desse.
+Para evitar loops infinitos (por exemplo, em um grafo com ciclos),
+interromperemos as iterações quando retornarmos a algum valor alcançado
+anteriormente. Em pseudo-código, podemos descrever isso como:
+
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+fecho_reflexivo_transitivo(relação, conjunto):
+ fecho = []
+ para cada elem do conjunto:
+  fecho += obter_elementos_atingidos(elem, [elem])
+ retornar fecho
+
+obter_elementos_atingidos(atual, caminho):
+ resultado = []
+ para cada dupla da relação:
+  {x, y} = dupla
+  se x == atual:
+   se y está em caminho ou y não está no conjunto:
+    continue
+   senão:
+    resultado += obter_elementos_atingidos(
+      atual, caminho ++ [y])
+ resultado += {caminho[0], atual}
+ retornar resultado
+\end{verbatim}
+\endgroup
+
+Esse código obterá todos os elementos alcançáveis para cada elemento do conjunto
+e os unirá em uma única lista ``fecho'' a ser retornada. Em outras palavras,
+retorna o fecho transitivo da relação. Como a lista ainda inclui \{elem, elem\}
+para todos os elementos do conjunto, o fecho será também reflexivo.
+
+Há, porém, três detalhes no código que desenvolvemos que diferem deste
+pseudo-código:
+
+\renewcommand{\labelenumi}{\alph{enumi}.}
+\begin{enumerate}
+  \item \emph{Será utilizada recursão ao invés de iteração}.
+  Isto é simples; dado que todos os elementos iterados (a relação e o conjunto)
+  são listas, podemos iterar utilizando pattern matching:
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{verbatim}
+iterar(lista):
+ case lista do
+  [] -> []
+  [head | tail] -> funcao(head) ++ iterar(tail)
+   # funcao(x) retornará uma lista parcial
+ end
+\end{verbatim}
+\endgroup
+  \item \emph{Será utilizado pattern matching ao invés de condições/funções}.
+  Especificamente, realizaremos as seguintes trocas:
+  \begingroup
+  \fontsize{8pt}{12pt}\selectfont
+  \begin{verbatim}
+{x, y} = dupla
+se x == atual:
+ ...
+# Trocar por:
+case dupla do
+ {^atual, y} -> ...
+end
+# --------------------- #
+se y está em caminho:
+ ...
+# Trocar por:
+se contém(caminho, y):
+ ...
+
+defp contém(lista, elem) do
+ case lista do
+  [] -> false
+  [^elem | _] -> true
+  [_ | tail] -> contém(tail, elem)
+ end
+end
+# --------------------- #
+caminho[0]
+# Trocar por:
+primeiro(caminho)
+
+defp primeiro(lista) do
+ case lista do
+   [head | _] -> head
+ end
+end
+  \end{verbatim}
+  \endgroup
+  \item \emph{Queremos retornar um fecho ordenado e com elementos únicos}.
+  Atualmente, como apresentado acima, o código retornará um fecho cujas duplas
+  variam em ordem e quantidade de acordo com a relação de entrada. Por exemplo,
+  haverá múltiplos elementos \{:a, :b\} se houver múltiplos caminhos de :a até :b;
+  e a ordem das tuplas \{:a, \_\} depende da ordem delas na relação original.
+  Além disso, a ordem do conjunto modifica também quais conjuntos de duplas 
+  aparecem primeiro. Para minimizar os efeitos que a ordem da relação e do
+  conjunto impõe, o resultado final será ordenado e terá duplicatas removidas.
+  Existem funções para isso na biblioteca padrão do Elixir, mas desejamos
+  garantir o uso de recursão. Para isso, criamos duas funções auxiliares simples,
+  unique() e sort(), sobre as quais o resultado final será aplicado antes de
+  ser retornado ao usuário. Assim, o resultado do fecho reflexivo transitivo
+  será previsível.
+\end{enumerate}
+
+Desta forma, aprofundando-se sobre o pseudo-código e com a sintaxe do Elixir,
+criamos a função ``RTC.of(relação, conjunto)'' em anexo, que realiza o fecho
+reflexivo transitivo da relação sobre o conjunto.
+
+\subsubsection{Testes}
+Criamos os casos de teste do nosso programa, com entradas e saídas esperadas.
+A ideia é cobrir o máximo de condições de borda para verificar o funcionamento
+total do nosso módulo. Sendo assim, definimos as seguintes propriedades para
+várias entradas:
+
+\begin{itemize}
+  \item \emph{Relação ou conjunto vazio}.
+  Para relação vazia, será retornado o fecho simétrico sobre o conjunto. Para
+  conjunto vazio, o fecho será sempre vazio.
+  \item \emph{Dupla da relação com elemento fora do conjunto}.
+  Se o elemento estiver do lado esquerdo da dupla, não iteraremos sobre o
+  elemento nunca. Se estiver do lado direito, precisamos ignorar esta dupla.
+  \item \emph{Ciclos na relação}.
+  Este caso pode gerar loops infinitos, então verificaremos que ele roda.
+  \item \emph{Múltiplos caminhos a um mesmo elemento}.
+  O caso em que podemos chegar a um único elemento por múltiplos caminhos
+  pode gerar elementos duplicados.
+  \item \emph{Grafos de relação desconexos}.
+  Deve gerar o mesmo valor de duas chamadas desconexas do fecho.
+  \item \emph{Relação já reflexiva/transitiva}.
+  A reflexividade/transitividade não pode ser perdida.
+  \item \emph{Elemento inalcançável por outro}.
+  Não haverá transitividade do segundo elemento ao primeiro.
+  \item \emph{Um único elemento no conjunto}.
+  O fecho será a bijeção do elemento sobre ele mesmo.
+  \item \emph{Tipos diferentes de elementos no conjunto}.
+  A única coisa que levará os tipos em consideração é a ordenação no final.
+  Tirando isso, o valor dos elementos não possui importância.
+\end{itemize}
+
+Construímos os testes tentando cobrir estas propriedades e outros casos que nos
+ocorreram, de relações sem condições de borda.
+%Falar brevemente como os testes tentam cobrir vários casos e listá-los.
+
+
+\section{Resultados}
 Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
 lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
 lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
 lorem ipsum dolor sit amet.
+%Falar como os resultados obtidos foram conforme o esperado.
+
+
+\section{Conclusão}
+Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
+lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
+lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
+lorem ipsum dolor sit amet.
+%Falar dos aprendizados sobre Elixir, programação funcional, e lógica formal.
+
+
+
+
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -583,41 +777,6 @@ lorem ipsum dolor sit amet.
 % Note that, LaTeX2e, unlike IEEE journals/conferences, places
 % footnotes above bottom floats. This can be corrected via the
 % \fnbelowfloat command of the stfloats package.
-
-
-\section{Desenvolvimento}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet.
-
-\subsubsection{Algoritmo}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet.
-
-\subsubsection{Testes}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet.
-
-%\subsubsection{Subsubsection Heading Here}
-%Subsubsection text here.
-
-
-
-\section{Conclusão}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet.
-
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet.
 
 
 
