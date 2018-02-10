@@ -1,0 +1,950 @@
+
+%% bare_jrnl_transmag.tex
+%% V1.4b
+%% 2015/08/26
+%% by Michael Shell
+%% see http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE 
+%% Transactions on Magnetics journal paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall the IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%*************************************************************************
+
+
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. The IEEE's font choices and paper sizes can   ***
+% *** trigger bugs that do not appear when using other class files.       ***                          ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
+
+
+
+\documentclass[journal,transmag]{IEEEtran}
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[journal]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/pkg/ifpdf
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
+
+
+
+
+
+% *** CITATION PACKAGES ***
+%
+%\usepackage{cite}
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of the IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off
+% such as if a citation ever needs to be enclosed in parenthesis.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 5.0 (2009-03-20) and later if using hyperref.sty.
+% The latest version can be obtained at:
+% http://www.ctan.org/pkg/cite
+% The documentation is contained in the cite.sty file itself.
+
+
+
+
+
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  % \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+% graphicx was written by David Carlisle and Sebastian Rahtz. It is
+% required if you want graphics, photos, etc. graphicx.sty is already
+% installed on most LaTeX systems. The latest version and documentation
+% can be obtained at: 
+% http://www.ctan.org/pkg/graphicx
+% Another good source of documentation is "Using Imported Graphics in
+% LaTeX2e" by Keith Reckdahl which can be found at:
+% http://www.ctan.org/pkg/epslatex
+%
+% latex, and pdflatex in dvi mode, support graphics in encapsulated
+% postscript (.eps) format. pdflatex in pdf mode supports graphics
+% in .pdf, .jpeg, .png and .mps (metapost) formats. Users should ensure
+% that all non-photo figures use a vector format (.eps, .pdf, .mps) and
+% not a bitmapped formats (.jpeg, .png). The IEEE frowns on bitmapped formats
+% which can result in "jaggedy"/blurry rendering of lines and letters as
+% well as large increases in file sizes.
+%
+% You can find documentation about the pdfTeX application at:
+% http://www.tug.org/applications/pdftex
+
+
+
+
+% *** MATH PACKAGES ***
+%
+%\usepackage{amsmath}
+% A popular package from the American Mathematical Society that provides
+% many useful and powerful commands for dealing with mathematics.
+%
+% Note that the amsmath package sets \interdisplaylinepenalty to 10000
+% thus preventing page breaks from occurring within multiline equations. Use:
+%\interdisplaylinepenalty=2500
+% after loading amsmath to restore such page breaks as IEEEtran.cls normally
+% does. amsmath.sty is already installed on most LaTeX systems. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/amsmath
+
+
+
+
+
+% *** SPECIALIZED LIST PACKAGES ***
+%
+%\usepackage{algorithmic}
+% algorithmic.sty was written by Peter Williams and Rogerio Brito.
+% This package provides an algorithmic environment fo describing algorithms.
+% You can use the algorithmic environment in-text or within a figure
+% environment to provide for a floating algorithm. Do NOT use the algorithm
+% floating environment provided by algorithm.sty (by the same authors) or
+% algorithm2e.sty (by Christophe Fiorio) as the IEEE does not use dedicated
+% algorithm float types and packages that provide these will not provide
+% correct IEEE style captions. The latest version and documentation of
+% algorithmic.sty can be obtained at:
+% http://www.ctan.org/pkg/algorithms
+% Also of interest may be the (relatively newer and more customizable)
+% algorithmicx.sty package by Szasz Janos:
+% http://www.ctan.org/pkg/algorithmicx
+
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+% Frank Mittelbach's and David Carlisle's array.sty patches and improves
+% the standard LaTeX2e array and tabular environments to provide better
+% appearance and additional user controls. As the default LaTeX2e table
+% generation code is lacking to the point of almost being broken with
+% respect to the quality of the end results, all users are strongly
+% advised to use an enhanced (at the very least that provided by array.sty)
+% set of table tools. array.sty is already installed on most systems. The
+% latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/array
+
+
+% IEEEtran contains the IEEEeqnarray family of commands that can be used to
+% generate multiline equations as well as matrices, tables, etc., of high
+% quality.
+
+
+
+
+% *** SUBFIGURE PACKAGES ***
+%\ifCLASSOPTIONcompsoc
+%  \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+%\else
+%  \usepackage[caption=false,font=footnotesize]{subfig}
+%\fi
+% subfig.sty, written by Steven Douglas Cochran, is the modern replacement
+% for subfigure.sty, the latter of which is no longer maintained and is
+% incompatible with some LaTeX packages including fixltx2e. However,
+% subfig.sty requires and automatically loads Axel Sommerfeldt's caption.sty
+% which will override IEEEtran.cls' handling of captions and this will result
+% in non-IEEE style figure/table captions. To prevent this problem, be sure
+% and invoke subfig.sty's "caption=false" package option (available since
+% subfig.sty version 1.3, 2005/06/28) as this is will preserve IEEEtran.cls
+% handling of captions.
+% Note that the Computer Society format requires a larger sans serif font
+% than the serif footnote size font used in traditional IEEE formatting
+% and thus the need to invoke different subfig.sty package options depending
+% on whether compsoc mode has been enabled.
+%
+% The latest version and documentation of subfig.sty can be obtained at:
+% http://www.ctan.org/pkg/subfig
+
+
+
+% *** FLOAT PACKAGES ***
+%
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, was written by
+% Frank Mittelbach and David Carlisle. This package corrects a few problems
+% in the LaTeX2e kernel, the most notable of which is that in current
+% LaTeX2e releases, the ordering of single and double column floats is not
+% guaranteed to be preserved. Thus, an unpatched LaTeX2e can allow a
+% single column figure to be placed prior to an earlier double column
+% figure.
+% Be aware that LaTeX2e kernels dated 2015 and later have fixltx2e.sty's
+% corrections already built into the system in which case a warning will
+% be issued if an attempt is made to load fixltx2e.sty as it is no longer
+% needed.
+% The latest version and documentation can be found at:
+% http://www.ctan.org/pkg/fixltx2e
+
+
+%\usepackage{stfloats}
+% stfloats.sty was written by Sigitas Tolusis. This package gives LaTeX2e
+% the ability to do double column floats at the bottom of the page as well
+% as the top. (e.g., "\begin{figure*}[!b]" is not normally possible in
+% LaTeX2e). It also provides a command:
+%\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/pkg/stfloats
+% Do not use the stfloats baselinefloat ability as the IEEE does not allow
+% \baselineskip to stretch. Authors submitting work to the IEEE should note
+% that the IEEE rarely uses double column equations and that authors should try
+% to avoid such use. Do not be tempted to use the cuted.sty or midfloat.sty
+% packages (also by Sigitas Tolusis) as the IEEE does not format its papers in
+% such ways.
+% Do not attempt to use stfloats with fixltx2e as they are incompatible.
+% Instead, use Morten Hogholm'a dblfloatfix which combines the features
+% of both fixltx2e and stfloats:
+%
+% \usepackage{dblfloatfix}
+% The latest version can be found at:
+% http://www.ctan.org/pkg/dblfloatfix
+
+
+
+
+%\ifCLASSOPTIONcaptionsoff
+%  \usepackage[nomarkers]{endfloat}
+% \let\MYoriglatexcaption\caption
+% \renewcommand{\caption}[2][\relax]{\MYoriglatexcaption[#2]{#2}}
+%\fi
+% endfloat.sty was written by James Darrell McCauley, Jeff Goldberg and 
+% Axel Sommerfeldt. This package may be useful when used in conjunction with 
+% IEEEtran.cls'  captionsoff option. Some IEEE journals/societies require that
+% submissions have lists of figures/tables at the end of the paper and that
+% figures/tables without any captions are placed on a page by themselves at
+% the end of the document. If needed, the draftcls IEEEtran class option or
+% \CLASSINPUTbaselinestretch interface can be used to increase the line
+% spacing as well. Be sure and use the nomarkers option of endfloat to
+% prevent endfloat from "marking" where the figures would have been placed
+% in the text. The two hack lines of code above are a slight modification of
+% that suggested by in the endfloat docs (section 8.4.1) to ensure that
+% the full captions always appear in the list of figures/tables - even if
+% the user used the short optional argument of \caption[]{}.
+% IEEE papers do not typically make use of \caption[]'s optional argument,
+% so this should not be an issue. A similar trick can be used to disable
+% captions of packages such as subfig.sty that lack options to turn off
+% the subcaptions:
+% For subfig.sty:
+% \let\MYorigsubfloat\subfloat
+% \renewcommand{\subfloat}[2][\relax]{\MYorigsubfloat[]{#2}}
+% However, the above trick will not work if both optional arguments of
+% the \subfloat command are used. Furthermore, there needs to be a
+% description of each subfigure *somewhere* and endfloat does not add
+% subfigure captions to its list of figures. Thus, the best approach is to
+% avoid the use of subfigure captions (many IEEE journals avoid them anyway)
+% and instead reference/explain all the subfigures within the main caption.
+% The latest version of endfloat.sty and its documentation can obtained at:
+% http://www.ctan.org/pkg/endfloat
+%
+% The IEEEtran \ifCLASSOPTIONcaptionsoff conditional can also be used
+% later in the document, say, to conditionally put the References on a 
+% page by themselves.
+
+
+
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+%
+%\usepackage{url}
+% url.sty was written by Donald Arseneau. It provides better support for
+% handling and breaking URLs. url.sty is already installed on most LaTeX
+% systems. The latest version and documentation can be obtained at:
+% http://www.ctan.org/pkg/url
+% Basically, \url{my_url_here}.
+
+
+
+
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+%
+% paper title
+% Titles are generally capitalized except for words such as a, an, and, as,
+% at, but, by, for, in, nor, of, on, or, the, to and up, which are usually
+% not capitalized unless they are the first or last word of the title.
+% Linebreaks \\ can be used within to get better formatting as desired.
+% Do not put math or special symbols in the title.
+\title{O Infinito na Matemática e no Cotidiano}
+
+
+
+% author names and affiliations
+% transmag papers use the long conference author name format.
+
+\author{\IEEEauthorblockN{Eric Rodrigues Pires
+%\IEEEauthorrefmark{1}
+}}
+%Homer Simpson\IEEEauthorrefmark{2},
+%James Kirk\IEEEauthorrefmark{3}, 
+%Montgomery Scott\IEEEauthorrefmark{3}, and
+%Eldon Tyrell\IEEEauthorrefmark{4},~\IEEEmembership{Fellow,~IEEE}}
+%\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering,
+%Georgia Institute of Technology, Atlanta, GA 30332 USA}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, CA 96678 USA}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, CA 90210 USA}% <-this % stops an unwanted space
+%\thanks{Manuscript received December 1, 2012; revised August 26, 2015. 
+%Corresponding author: M. Shell (email: http://www.michaelshell.org/contact.html).}}
+
+
+
+% The paper headers
+\markboth{Lógica Computacional,~Primeira atividade,~Janeiro de 2018}%
+{PIRES,~E.~R.:~O Infinito na Matemática e no Cotidiano}
+% The only time the second header will appear is for the odd numbered pages
+% after the title page when using the twoside option.
+% 
+% *** Note that you probably will NOT want to include the author's ***
+% *** name in the headers of peer review papers.                   ***
+% You can use \ifCLASSOPTIONpeerreview for conditional compilation here if
+% you desire.
+
+
+
+
+% If you want to put a publisher's ID mark on the page you can do it like
+% this:
+%\IEEEpubid{0000--0000/00\$00.00~\copyright~2015 IEEE}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark.
+
+
+
+% use for special paper notices
+%\IEEEspecialpapernotice{(Invited Paper)}
+
+
+% for Transactions on Magnetics papers, we must declare the abstract and
+% index terms PRIOR to the title within the \IEEEtitleabstractindextext
+% IEEEtran command as these need to go into the title area created by
+% \maketitle.
+% As a general rule, do not put math, special symbols or citations
+% in the abstract or keywords.
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+Nesse artigo, buscamos entender as motivações de Cantor para
+compreender o infinito, e como o trabalho dele nos influencia no cotidiano
+para tentar entender as semelhanças e diferenças da matemática
+abstrata e o universo físico.
+\end{abstract}
+
+% Note that keywords are not normally used for peerreview papers.
+\begin{IEEEkeywords}
+Infinito, matemática, Cantor, números astronômicos, universo.
+\end{IEEEkeywords}}
+
+
+
+% make the title area
+\maketitle
+
+
+% To allow for easy dual compilation without having to reenter the
+% abstract/keywords data, the \IEEEtitleabstractindextext text will
+% not be used in maketitle, but will appear (i.e., to be "transported")
+% here as \IEEEdisplaynontitleabstractindextext when the compsoc 
+% or transmag modes are not selected <OR> if conference mode is selected 
+% - because all conference papers position the abstract like regular
+% papers do.
+\IEEEdisplaynontitleabstractindextext
+% \IEEEdisplaynontitleabstractindextext has no effect when using
+% compsoc or transmag under a non-conference mode.
+
+
+
+
+
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+\begin{quotation}
+	``\textit{It is known that there are an infinite number of worlds, simply because there is an infinite amount of space for them to be in. However, not every one of them is inhabited. Therefore, there must be a finite number of inhabited worlds. Any finite number divided by infinity is as near to nothing as makes no odds, so the average population of all the planets in the Universe can be said to be zero. From this it follows that the population of the whole Universe is also zero, and that any people you may meet from time to time are merely the products of a deranged imagination.}''
+	
+	\hfill --- Douglas Adams
+\end{quotation}
+
+
+\section{Introdução}
+% The very first letter is a 2 line initial drop letter followed
+% by the rest of the first word in caps.
+% 
+% form to use if the first word consists of a single letter:
+% \IEEEPARstart{A}{demo} file is ....
+% 
+% form to use if you need the single drop letter followed by
+% normal text (unknown if ever used by the IEEE):
+% \IEEEPARstart{A}{}demo file is ....
+% 
+% Some journals put the first two words in caps:
+% \IEEEPARstart{T}{his demo} file is ....
+% 
+% Here we have the typical use of a "T" for an initial drop letter
+% and "HIS" in caps to complete the first word.
+\IEEEPARstart{O}{infinito} já faz parte do nosso dia-a-dia,
+seja como uma expressão idiomática, como ideia de algo gigante
+ou, não surpreendentemente, como elemento de ficção científica.
+De uma forma ou de outra, ele não nos é estranho.
+Mas nem sempre conseguimos entender a dimensão de ``infinito'',
+ou a qual infinito dentre vários estamos nos referindo.
+
+Ele é, antes de mais nada, um conceito matemático. O infinito
+não deixa de ser uma abstração, utilizada em situações matemáticas
+variadas, com usos que variam de ``ideal'' e ``inalcançável'' a
+``algo que sempre continua'' e ``quantidade incontável''. Porém,
+há enormes diferenças entre cada definição, em especial de um ponto
+de vista matemático.
+
+Essa dúvida motiva o matemático Georg Cantor a reexplorar o conceito conhecido de infinito,
+desafiando a intuição matemática da época em
+que publicou os seus trabalhos. Isso permite analisar, sob uma nova
+ótica, como o novo conceito se encaixa em aplicações
+distintas da matemática.
+
+Neste artigo, tratamos do significado novo do infinito de Cantor,
+e como isto se emerge na matemática e no nosso cotidiano.
+%surge na matemática, como é reexplorado por Cantor, e como
+%tentamos cooperar com essas ideias no cotidiano pela comparação
+%com o nosso universo.
+
+% An example of a floating figure using the graphicx package.
+% Note that \label must occur AFTER (or within) \caption.
+% For figures, \caption should occur after the \includegraphics.
+% Note that IEEEtran v1.7 and later has special internal code that
+% is designed to preserve the operation of \label within \caption
+% even when the captionsoff option is in effect. However, because
+% of issues like this, it may be the safest practice to put all your
+% \label just after \caption rather than within \caption{}.
+%
+% Reminder: the "draftcls" or "draftclsnofoot", not "draft", class
+% option should be used if it is desired that the figures are to be
+% displayed while in draft mode.
+%
+%\begin{figure}[!t]
+%\centering
+%\includegraphics[width=2.5in]{myfigure}
+% where an .eps filename suffix will be assumed under latex, 
+% and a .pdf suffix will be assumed for pdflatex; or what has been declared
+% via \DeclareGraphicsExtensions.
+%\caption{Simulation results for the network.}
+%\label{fig_sim}
+%\end{figure}
+
+% Note that the IEEE typically puts floats only at the top, even when this
+% results in a large percentage of a column being occupied by floats.
+
+
+% An example of a double column floating figure using two subfigures.
+% (The subfig.sty package must be loaded for this to work.)
+% The subfigure \label commands are set within each subfloat command,
+% and the \label for the overall figure must come after \caption.
+% \hfil is used as a separator to get equal spacing.
+% Watch out that the combined width of all the subfigures on a 
+% line do not exceed the text width or a line break will occur.
+%
+%\begin{figure*}[!t]
+%\centering
+%\subfloat[Case I]{\includegraphics[width=2.5in]{box}%
+%\label{fig_first_case}}
+%\hfil
+%\subfloat[Case II]{\includegraphics[width=2.5in]{box}%
+%\label{fig_second_case}}
+%\caption{Simulation results for the network.}
+%\label{fig_sim}
+%\end{figure*}
+%
+% Note that often IEEE papers with subfigures do not employ subfigure
+% captions (using the optional argument to \subfloat[]), but instead will
+% reference/describe all of them (a), (b), etc., within the main caption.
+% Be aware that for subfig.sty to generate the (a), (b), etc., subfigure
+% labels, the optional argument to \subfloat must be present. If a
+% subcaption is not desired, just leave its contents blank,
+% e.g., \subfloat[].
+
+
+% An example of a floating table. Note that, for IEEE style tables, the
+% \caption command should come BEFORE the table and, given that table
+% captions serve much like titles, are usually capitalized except for words
+% such as a, an, and, as, at, but, by, for, in, nor, of, on, or, the, to
+% and up, which are usually not capitalized unless they are the first or
+% last word of the caption. Table text will default to \footnotesize as
+% the IEEE normally uses this smaller font for tables.
+% The \label must come after \caption as always.
+%
+%\begin{table}[!t]
+%% increase table row spacing, adjust to taste
+%\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+%\caption{An Example of a Table}
+%\label{table_example}
+%\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+%\begin{tabular}{|c||c|}
+%\hline
+%One & Two\\
+%\hline
+%Three & Four\\
+%\hline
+%\end{tabular}
+%\end{table}
+
+
+% Note that the IEEE does not put floats in the very first column
+% - or typically anywhere on the first page for that matter. Also,
+% in-text middle ("here") positioning is typically not used, but it
+% is allowed and encouraged for Computer Society conferences (but
+% not Computer Society journals). Most IEEE journals/conferences use
+% top floats exclusively. 
+% Note that, LaTeX2e, unlike IEEE journals/conferences, places
+% footnotes above bottom floats. This can be corrected via the
+% \fnbelowfloat command of the stfloats package.
+
+
+\section{Desenvolvimento}
+No século XVII, vemos uma revolução acadêmica na matemática com
+o nascimento do estudo do cálculo. Isaac Newton e Gottfried Leibniz
+lideram as ideias -- e as polêmicas -- por trás de uma nova
+forma de se visualizar o mundo. Ela viria a influenciar toda uma
+gama de áreas científicas, como a engenharia, a economia,
+a química, e a física.
+
+Sem dúvida agora um importante ramo da matemática, o cálculo foi
+também alvo de muitas disputas sobre quem haveria realizado a
+contribuição inicial das suas ideias. Mesmo assim, ele contribuiu
+para a percepção da continuidade de funções algébricas.
+
+Uma questão, porém, deixada de lado em meio a tantas novas ideias,
+foi o conceito de infinito. Já estudado desde a Antiguidade,
+ele não era desconhecido, sendo a base do cálculo infinitesimal
+utilizada por Newton e Leibniz para suas constatações.
+Porém, questões acerca do infinito sempre eram vistas como
+``peculiaridades da filosofia'', como o Paradoxo de Zenão
+(a corrida de Aquiles e a tartaruga) e, posteriormente, o
+Hotel de Hilbert. Dessa forma, por muito tempo, foi tratado apenas
+como um símbolo ($\infty$), sem aprofundamento sobre as propriedades
+que ele poderia ter.
+
+
+
+% needed in second column of first page if using \IEEEpubid
+%\IEEEpubidadjcol
+
+
+\subsection{Cantor Reinventa o Infinito}
+Quando Cantor visita o conceito de infinito no século XIX,
+o cálculo já havia amadurecido consideravelmente. As ideias haviam
+sido unanimemente consolidadas no mundo acadêmico. Porém, não havia
+nenhum movimento na direção de um entendimento profundo do infinito.
+Ele era considerado, simplesmente, como o tamanho do conjunto dos
+naturais.
+
+Mais especificamente, entendia-se o infinito como um valor que não pode ser alcançado, que não é um número. Mas era uma ideia baseada
+simplesmente em ``etapas''. O infinito seria, portanto,
+a consequência de tomar múltiplos passos sem fim; algo do que nos
+aproximamos, ou convergimos. Ele era, por assim dizer, uma constante imprática que deveria ser evitada.
+
+Porém, Georg Cantor debruça-se no estudo da teoria dos conjuntos,
+a partir do trabalho do tcheco Bernhard Bolzano,
+e verifica que o infinito possui propriedades matemáticas nunca
+antes enxergadas. Ele descobre sobre a cardinalidade de diferentes
+conjuntos, permitindo realizar comparações entre diferentes infinitos
+(como por exemplo, o conjunto dos números naturais e o conjunto
+dos números reais).
+
+Assim, desenvolve uma aritmética do infinito,
+trabalhando-se diretamente com a ideia de enumerabilidade apesar
+da infinidade. Finalmente, ele consegue calcular e demonstrar a diferença entre
+infinitos contáveis (como os naturais e os inteiros) e incontáveis (como os 
+irracionais e os reais).
+Ele também cria o conceito de transfinito, para se referir às
+diferentes cardinalidades que um conjunto infinito pode ter.
+
+\subsubsection{Cantor nos Dias de Hoje}
+
+Seu trabalho foi alvo de fortes críticas à época, tido como loucura
+pela utilização prática do infinito, algo que então era considerado proibido.
+Porém, o legado de Cantor nos deu uma nova percepção do infinito, uma que
+utilizava uma explicação lógica com utilidade matemática, e que hoje é considerada
+indispensável. Depois de tantos anos, hoje vemos como foi essencial este trabalho
+para elaborarmos áreas científicas como a matemática discreta, que por sua vez
+é responsável pela computação, por exemplo.
+
+Porém, a aritmética do infinito segue como conteúdo puramente matemático.
+A maneira com que enxergamos o infinito usualmente difere da ideal de Cantor,
+por razões que serão abordadas nas seções a seguir.
+
+
+\subsection{Noções de Infinito no Cotidiano}
+Apesar de não ser tão comum no linguajar do dia-a-dia, o infinito também faz
+parte do vocabulário em conversas, que vão do casual ao profissional.
+Seja poético (``o amor é infinito'') ou hiperbólico (``tarefa infinita''), enfim,
+há alguma ideia ou outra que constitua a imaginação coletiva nessas figuras de
+linguagem.
+
+Porém, em ambos os casos, geralmente não há dimensão adequada ao se referir ao
+infinito. Isto é, o que percebemos como infinito não é, e nem está próximo, do
+que consideramos infinito. Ao dizermos, por exemplo, que ``o número de grãos de areia na praia de
+Copacabana é infinito'', o que ocorre não é uma singularidade física, mas sim
+uma constatação pessoal de que a tarefa de contar o número de grãos de areia
+seria humanamente impossível. Se trata de uma extrapolação de qualquer expectativa
+humana.
+
+O infinito, também, se caracteriza como algo que não é compreensível;
+que foge de qualquer intuição que temos. Isso vale também para o infinito de Cantor.
+Porém, algo a se salientar com extrema cautela é que nem tudo que nos foge à
+capacidade mental e física chegue a ser infinito propriamente dito.
+Ele é, antes de tudo, algo que não apresenta qualquer limite.
+
+Podemos estabelecer um limite numérico superior para qualquer situação cotidiana.
+Por exemplo, podemos dizer que o número de grãos de areia nunca será maior que o
+número de átomos na Terra. A comparação pode parecer absurda, mas tem seu argumento:
+ambos são quantias finitas, que existem no nosso universo. O infinito não cabe
+em qualquer coisa que não tenha, também, uma dimensão infinita de mesmo tamanho,
+como demonstra Cantor através da enumerabilidade. Portanto, cabe a nós
+caracterizarmos o que é infinito e o que parece infinito.
+
+\subsubsection{Números Astronômicos}
+Números astronômicos se referem a números de considerável magnitude, ou
+ordem de grandeza, ou número de casas decimais. São utilizados para se falar
+tanto de números extremamente grandes (como os grãos de areia em uma praia) ou
+extremamente pequenos (como o tamanho de um átomo). São efetivamente valores,
+presentes de alguma forma no nosso universo, mas longe de qualquer coisa do
+nosso cotidiano.
+
+A magnitude dos números astronômicos é, puramente, uma dimensão relativa: 1 trilhão não se equipara a
+um \textit{googol} ($10^100$). Porém, ambos são impossíveis de serem visualizados
+mentalmente. Eles fogem completamente à nossa compreensão, mas são materiais e,
+de alguma forma, ainda podem ser intuídos: por exemplo,
+podemos (tentar) imaginar mil casas, com mil caixas cada, com mil folhas de
+papel cada, com mil pontos cada. Dessa forma, podemos ter uma imagem visual que
+dê a dimensão do valor de um trilhão.
+
+Como falamos anteriormente, o infinito que está presente no nosso cotidiano não
+é realmente algo que não tem fim, apenas algo que não é palpável. Um número
+astronômico é justamente isso. É um número muito grande (ou muito pequeno), que
+não é infinito. São coisas completamente diferentes de um ponto de vista matemático,
+mas cotidianamente são equiparáveis ou iguais. Os números astronômicos são tão
+materiais quanto a quarta dimensão, porém nosso cérebro é fisicamente incapaz de
+compreender algo ao qual nunca foi preparado.
+
+Isso se reflete por parte de uma única constatação:
+o próprio funcionamento do infinito foge às expectativas físicas que temos
+do mundo. A expectativa matemática não se cumpre univocamente na realidade.
+
+
+\subsection{Matemática x Universo}
+A matemática é, antes de mais nada, uma forma de entendermos o mundo. Ela é
+uma abstração histórica e antropológica. Mas é, também, um fruto de como
+percebemos o universo ao nosso redor.
+
+O infinito surge na matemática consequencialmente, a partir dos axiomas que
+nós adotamos. Ele aparece também, como vimos, ao se referir ao cálculo de
+Newton-Leibniz, ou à teoria dos conjuntos de Cantor.
+
+Porém, temos dificuldade para juntarmos as duas ideias. Acima da questão da
+limitação mental, aqui falamos do verdadeiro infinito, como estrutura
+matemática, dentro do nosso universo.
+
+\subsubsection{Paradoxos}
+Desde a Antiguidade, já se conhecia o infinito. E desde então, já se tentava
+visualizar algo que, por definição, não é visualizável. É um debate não só
+matemático, como também filosófico, de como tal conceito pode aparecer na nossa
+vida. Porém, usualmente tais tentativas acabam levando a conflitos ou paradoxos;
+não por malícia ou inaptidão do interlocutor, mas pela própria natureza do infinito.
+
+Um paradoxo muito conhecido, do filósofo Zenão da Grécia Antiga, se trata sobre
+uma pessoa disputando uma corrida contra uma tartaruga. A tartaruga começa com vantagem,
+e a pessoa corre bem mais rapidamente. Porém, ao chegar na posição inicial
+da tartaruga, esta teria se movido alguma distância, mesmo que lentamente.
+Assim, a pessoa sempre chega numa posição da tartaruga; sempre diminuindo a distância,
+mas nunca sem alcançá-la. Hoje, sabemos que o cálculo permite analisar esta questão
+através da variável tempo, explicitando que haverá um momento em que se ultrapassa
+a tartaruga na corrida.
+
+Outro paradoxo, o Hotel de Hilbert, trata sobre uma hospedagem com infinitos quartos,
+todos ocupados por infinitos visitantes. Ao chegar uma nova pessoa, poderemos
+hospedá-la no hotel no primeiro quarto, simplesmente realocando todos os
+ocupantes atuais para o próximo quarto na sequência. Essa abordagem,
+decorrente dos estudos de Cantor, parece completamente surreal do nosso ponto
+de vista, mas matematicamente está correta. É um exemplo de como a intuição
+instintiva não corresponde ao entendimento do infinito.
+
+Dessa forma, uma mídia que tem sido positivamente provocativa no debate é a
+ficção científica. Para o humor ou para a didática, encontramos nesse meio
+uma forma de transmitir intuições matemáticas sobre o infinito. Usualmente,
+estão ligadas ao absurdo, com situações que não são possíveis na nossa realidade.
+Mas tentam estabelecer uma expectativa do que decorre da existência de um infinito
+no mundo físico.
+
+\subsubsection{Física Quântica}
+Porém, o infinito não faz parte do mundo físico. Ao que se referem nossos
+conhecimentos, a física quântica, no século XX, mostra que o universo é \emph{quantizável}
+-- isto é, ele não é contínuo, mas composto por medidas
+\emph{quantizáveis}. Tudo que nos cerca é, portanto, composto de pacotes
+indivisíveis. O físico Max Planck mostra que espaço, tempo, energia e matéria
+possuem valores em degraus, utilizando para isso valores astronômicos minúsculos.
+
+Portanto, a nossa intuição cotidiana de algo incalculável corresponde,
+coincidentemente, à quantização do universo. Praticamente tudo acaba, de uma
+forma ou outra, mesmo quase que imperceptivelmente, caindo à regra.
+A única coisa existente no universo que aparentemente
+foge a essa convenção são buracos negros, que possuem densidade infinita devido
+à força da gravidade sobrepor qualquer outra força elementar conhecida. Mas talvez
+isso seja, também, somente ao nosso desconhecimento sobre como funcionam -- o que
+poderá mudar num futuro breve.
+
+Em suma, a ideia de infinito não cabe na nossa realidade. Isso se deve a uma
+simples razão: o infinito não existe. Ele é uma característica matemática tão
+fundamental quanto números como 0 e 1, mas eles tão pouco existem no universo.
+A matemática é uma maneira pela qual projetamos o mundo para conseguirmos
+entendê-lo, mas ela é, antes de mais nada, uma ciência. Através de axiomas,
+concordados entre uma comunidade científica, ela nos permite estabelecer regras
+e relações. Por isso, ela é uma invenção, fruto da necessidade humana de compreender
+aquilo que acontece ao nosso redor. Dessa forma, não há obrigatoriamente uma
+correlação da matemática com o mundo. No caso do infinito, por exemplo, tal ideia
+é literalmente grande demais para o nosso astronômico, porém finito, universo.
+
+%\subsubsection{Subsubsection Heading Here}
+%Subsubsection text here.
+
+
+
+\section{Conclusão}
+Indiscutivelmente, o infinito é parte fundamental para compreendermos
+a matemática. Ele nos permite entender questões sobre continuidade, cardinalidade,
+enumerabilidade, potencialidade, dentre outras. Porém, não é possível visualizar
+o infinito na nossa realidade, a começar pelo fato de não ser algo que exista
+fisicamente. O que achamos que é infinito no nosso dia-a-dia, na verdade, é apenas
+absurdamente grande ou absurdamente pequeno. É finito, assim como tudo no
+universo. Mas mesmo tendo um fim, o que temos não é pouca coisa. Pelo contrário,
+por não ser infinito, só nos dá mais razões de aproveitarmos o que temos.
+Enquanto houver, e enquanto durar.
+
+
+
+
+
+% if have a single appendix:
+%\appendix[Proof of the Zonklar Equations]
+% or
+%\appendix  % for no appendix heading
+% do not use \section anymore after \appendix, only \section*
+% is possibly needed
+
+% use appendices with more than one appendix
+% then use \section to start each appendix
+% you must declare a \section before using any
+% \subsection or using \label (\appendices by itself
+% starts a section numbered zero.)
+%
+
+
+%\appendices
+%\section{Proof of the First Zonklar Equation}
+%Appendix one text goes here.
+
+% you can choose not to have a title for an appendix
+% if you want by leaving the argument blank
+%\section{}
+%Appendix two text goes here.
+
+
+% use section* for acknowledgment
+%\section*{Acknowledgment}
+%
+%
+%The authors would like to thank...
+
+
+% Can use something like this to put references on a page
+% by themselves when using endfloat and the captionsoff option.
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+%\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+\begin{thebibliography}{1}
+
+\bibitem{infinormatica}
+STEWART,~Ian. \emph{O Laboratório de Infinormática}. Scientific American Brasil, Coleção Matemática, ed.~1, p.~6-11, 2007.
+\bibitem{dangerous}
+\emph{Dangerous Knowledge}. Produção de David Malone. Londres: BBC Productions, 2007.
+\bibitem{dissertacao}
+BORGES,~Bruno~Andrade. \emph{O Infinito na Matemática}. 2014. 79f. Dissertação (Mestrado) -- Faculdade de Filosofia, Ciências e Letras de Ribeirão Preto, Universidade de São Paulo, Ribeirão Preto.
+%\bibitem{IEEEhowto:kopka}
+%H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+
+\end{thebibliography}
+
+% biography section
+% 
+% If you have an EPS/PDF photo (graphicx package needed) extra braces are
+% needed around the contents of the optional argument to biography to prevent
+% the LaTeX parser from getting confused when it sees the complicated
+% \includegraphics command within an optional argument. (You could create
+% your own custom macro containing the \includegraphics command to make things
+% simpler here.)
+%\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{mshell}}]{Michael Shell}
+% or if you just want to reserve a space for a photo:
+
+%\begin{IEEEbiography}{Michael Shell}
+%Biography text here.
+%\end{IEEEbiography}
+
+% if you will not have a photo at all:
+%\begin{IEEEbiographynophoto}{John Doe}
+%Biography text here.
+%\end{IEEEbiographynophoto}
+
+% insert where needed to balance the two columns on the last page with
+% biographies
+%\newpage
+
+%\begin{IEEEbiographynophoto}{Jane Doe}
+%Biography text here.
+%\end{IEEEbiographynophoto}
+
+% You can push biographies down or up by placing
+% a \vfill before or after them. The appropriate
+% use of \vfill depends on what kind of text is
+% on the last page and whether or not the columns
+% are being equalized.
+
+%\vfill
+
+% Can be used to pull up biographies so that the bottom of the last one
+% is flush with the other column.
+%\enlargethispage{-5in}
+
+
+
+% that's all folks
+\end{document}
+
+
