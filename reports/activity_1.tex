@@ -354,7 +354,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Primeiro Exercício-Programa}
+\title{Primeiro Exercício Programa}
 
 
 
@@ -478,7 +478,7 @@ relação transitiva e reflexiva. Usaremos a linguagem de programação
 Elixir para seu desenvolvimento.
 
 A linguagem de programação Elixir é uma linguagem de propósito geral funcional,
-dinâmica e que roda na máquina virtual Erlang. Com Elixir é possível criar aplicações
+dinâmica e que roda na máquina virtual Erlang. Com Elixir, é possível criar aplicações
 tolerante a falhas e distribuídas. Nesse projeto, usamos o ferramenta Mix,
 que facilita a criação, gerenciamento e teste de projetos escritos em Elixir.
 A linguagem tem preocupação especial com a documentação do código.
@@ -487,11 +487,8 @@ testados tais como o código, a fim de evitar inconsistência.
 
 Ao longo deste projeto, usaremos recursos da linguagem como \textit{pattern mathing}
 e recursão. \textit{Pattern mathing} é um mecanismo para extrair valores de uma estrutura
-de dados que satisfaçam um padrão. Recursão (no contexto de programação) é o processo
+de dados que satisfaçam um padrão. Recursão -- no contexto de programação -- é o processo
 de usar uma função para definir a si própria.
-
-% Explicar o problema e como será utilizado o Elixir para solucioná-lo.
-% Falar sobre o Elixir, pattern matching, recursão.
 
 
 \section{Desenvolvimento}
@@ -501,7 +498,7 @@ optamos por manualmente desenvolver funções auxiliares pelos princípios de
 recursão e \textit{pattern matching}.
 
 \subsubsection{Modelagem}
-Criamos o nosso módulo do Elixir, RTC, que irá criar um fecho reflexivo e
+Criamos o nosso módulo do Elixir, \texttt{RTC}, que irá criar um fecho reflexivo e
 transitivo (em inglês, ``\textit{reflexive transitive closure}'') a partir de
 uma relação binária $R$ e um conjunto $A$ tal que $R \subseteq A \times A$.
 Para isso, precisamos definir como será a modelagem de relações binárias e
@@ -634,7 +631,7 @@ end
 \end{enumerate}
 
 Desta forma, aprofundando-se sobre o pseudo-código e com a sintaxe do Elixir,
-criamos a função ``RTC.of(relação, conjunto)'' em anexo, que realiza o fecho
+criamos a função \texttt{RTC.of(relação, conjunto)}, que realiza o fecho
 reflexivo transitivo da relação sobre o conjunto.
 
 \subsubsection{Testes}
@@ -670,19 +667,20 @@ várias entradas:
 
 Construímos os testes tentando cobrir estas propriedades e outros casos que nos
 ocorreram, de relações sem condições de borda.
-%Falar brevemente como os testes tentam cobrir vários casos e listá-los.
 
 
 \section{Resultados}
-Ao término desse exercício programa, conseguimos desenvolver um algoritmo de fecho
-reflexivo e transitivo. Os casos de teste preveem várias situações as quais o
-programa responderá e corroboram o correto funcionamento do programa.
-
+Ao término desse exercício programa, conseguimos desenvolver um algoritmo de
+fecho reflexivo e transitivo, em \texttt{rtc/lib/rtc.ex}. Os casos de teste foram
+criados no arquivo \texttt{rtc/test/rtc\_test.exs}, e preveem várias situações
+as quais o programa responderá. Executando o comando \texttt{mix test} na pasta
+\texttt{rtc}, todos os testes passaram, corroborando o correto funcionamento do
+programa.
 
 
 \section{Conclusão}
 Esse exercício programa nos permitiu exercitar conceitos importantes de matemática
-discreta. Usamos a definição de relações transitivos e reflexivas para criar o
+discreta. Usamos a definição de relações transitivas e reflexivas para criar o
 algoritmo para calcular o fecho. A linguagem Elixir foi uma ótima ferramenta
 para essa tarefa. Ela nos deu ferramentas de programação funcional 
 (\textit{pattern matting}, recursão) que foram adequadas para a resolução
