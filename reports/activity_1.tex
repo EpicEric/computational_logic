@@ -412,7 +412,7 @@
 % in the abstract or keywords.
 \IEEEtitleabstractindextext{%
 \begin{abstract}
-Nesse relatório, demonstramos como pudémos desenvolver um algoritmo de fecho
+Nesse relatório, demonstramos como pudemos desenvolver um algoritmo de fecho
 reflexivo e transitivo de uma relação binária através dos conceitos aprendidos
 em aula.
 \end{abstract}
@@ -455,13 +455,6 @@ Elixir, relação binária, fecho, reflexão, transitividade, recursão.
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
-\begin{quotation}
-	``\textit{As coisas quebram, as pessoas morrem.}''
-	
-	\hfill --- Edson Midorikawa
-\end{quotation}
-
-
 \section{Introdução}
 % The very first letter is a 2 line initial drop letter followed
 % by the rest of the first word in caps.
@@ -478,10 +471,25 @@ Elixir, relação binária, fecho, reflexão, transitividade, recursão.
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{L}{orem} ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+\IEEEPARstart{E}{sse} exercício programa tem como objetivo determinar o fecho
+transitivo e reflexivo de uma relação dada. O fecho transitivo e reflexivo de
+uma relação é o menor conjunto tal que sua união com a relação resulta em uma 
+relação transitiva e reflexiva. Usaremos a linguagem de programação
+Elixir para seu desenvolvimento.
+
+A linguagem de programação Elixir é uma linguagem de propósito geral funcional,
+dinâmica e que roda na máquina virtual Erlang. Com Elixir é possível criar aplicações
+tolerante a falhas e distribuídas. Nesse projeto, usamos o ferramenta Mix,
+que facilita a criação, gerenciamento e teste de projetos escritos em Elixir.
+A linguagem tem preocupação especial com a documentação do código.
+Existem nativamente funções de acesso e geração de documentação e os exemplos são
+testados tais como o código, a fim de evitar inconsistência.
+
+Ao longo deste projeto, usaremos recursos da linguagem como \textit{pattern mathing}
+e recursão. \textit{Pattern mathing} é um mecanismo para extrair valores de uma estrutura
+de dados que satisfaçam um padrão. Recursão (no contexto de programação) é o processo
+de usar uma função para definir a si própria.
+
 % Explicar o problema e como será utilizado o Elixir para solucioná-lo.
 % Falar sobre o Elixir, pattern matching, recursão.
 
@@ -666,20 +674,23 @@ ocorreram, de relações sem condições de borda.
 
 
 \section{Resultados}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet.
-%Falar como os resultados obtidos foram conforme o esperado.
+Ao término desse exercício programa, conseguimos desenvolver um algoritmo de fecho
+reflexivo e transitivo. Os casos de teste preveem várias situações as quais o
+programa responderá e corroboram o correto funcionamento do programa.
+
 
 
 \section{Conclusão}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet.
-%Falar dos aprendizados sobre Elixir, programação funcional, e lógica formal.
-
+Esse exercício programa nos permitiu exercitar conceitos importantes de matemática
+discreta. Usamos a definição de relações transitivos e reflexivas para criar o
+algoritmo para calcular o fecho. A linguagem Elixir foi uma ótima ferramenta
+para essa tarefa. Ela nos deu ferramentas de programação funcional 
+(\textit{pattern matting}, recursão) que foram adequadas para a resolução
+do problema. Aprendemos muito sobre programação funcional com esse exercício.
+O novo paradigma nos forçou a abandonar estruturas de programação como \textit{loop} e
+variáveis mutáveis, que são bastante comuns em linguagem imperativas. No lugar delas,
+pensamos em recursão e imutabilidade. Esse aprendizado será valioso para
+projetos futuros.
 
 
 
@@ -902,5 +913,6 @@ Elixir. \emph{Introduction}. Disponível em: https://elixir-lang.org/getting-sta
 
 % that's all folks
 \end{document}
+
 
 
