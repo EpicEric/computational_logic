@@ -23,7 +23,7 @@ defmodule Grammar do
 
   """
   def generates_word?(list, start, rules, terms, nonterms) do
-    contains?(list, generate_all(size(list), start, rules, terms, nonterms))
+    Enum.member?(generate_all(Enum.count(list), start, rules, terms, nonterms), list)
   end
 
   @doc """
@@ -45,144 +45,39 @@ defmodule Grammar do
 
   """
   def generate_all(length, start, rules, terms, nonterms) do
-    generate(length, [], [], [start], rules, rules, terms, nonterms) |> unique() |> sort()
+    generate(length, [], [start], rules, rules, terms, nonterms) |> Enum.uniq() |> Enum.sort()
   end
 
-  @doc """
-  Receives a list and returns the list with unique elements.
-
-  ## Parameters
-    - list: the input list
-
-  ## Examples
-      iex> Grammar.unique([2, 1, 3, 1, 4, 3, 2, 5])
-      [2, 1, 3, 4, 5]
-
-  """
-  def unique(list) do
-    case list do
-      [] -> []
-      [head | tail] -> [head] ++ unique(remove_duplicates_of(head, tail))
-    end
-  end
-
-  @doc """
-  Receives a list and returns the ascending sorted list through bubblesort.
-
-  ## Parameters
-    - list: the input list
-
-  ## Examples
-      iex> Grammar.sort([2, 1, 3, 1, 4, 3, 2, 5])
-      [1, 1, 2, 2, 3, 3, 4, 5]
-
-  """
-  def sort(list) do
-    case list do
-      [] -> []
-      [head | tail] ->
-        {smallest, new_tail} = get_smallest_element(head, tail)
-        [smallest] ++ sort(new_tail)
-    end
-  end
-
-  defp generate(length, prev, curr, next, rules, orig_rules, terms, nonterms) do
+  defp generate(length, prev, next, rules, orig_rules, terms, nonterms) do
     # Parar recursão quando a palavra for maior que o tamanho máximo
-    if size(next) > length do
+    if Enum.count(next) > length do
       []
     else
-      case curr do
-        [] -> # curr vazio
+      case rules do
+        [] ->
           case next do
             [] ->
               # Verificar se prev é uma palavra com apenas terminais
-              if is_made_of?(prev, terms) do
+              if Enum.all?(prev, fn(x) -> Enum.member?(terms, x) end) do
                 [prev]
               else
                 []
               end
             [head | tail] ->
-              # Mover primeiro valor de next para curr
-              generate(length, prev, [head], tail, rules, orig_rules, terms, nonterms)
+              # Mover primeiro valor de next para prev
+              generate(length, prev ++ [head], tail, orig_rules, orig_rules, terms, nonterms)
           end
-        [_ | _] -> # curr com um ou mais elementos
-          case rules do
-            [] ->
-              # Aplicar iteração da cadeia
-              case next do
-                [] ->
-                  generate(length, prev ++ curr, [], [], orig_rules, orig_rules, terms, nonterms)
-                [head | tail] ->
-                  generate(length, prev, curr ++ [head], tail, orig_rules, orig_rules, terms, nonterms) ++
-                  generate(length, prev ++ curr, [head], tail, orig_rules, orig_rules, terms, nonterms)
-              end
-            [{^curr, subst} | rules_tail] ->
-              # Aplicar recursão + iteração das regras
-              case next do
-                [] ->
-                  generate(length, [], [], prev ++ subst ++ next, orig_rules, orig_rules, terms, nonterms) ++
-                  generate(length, prev ++ curr, [], [], orig_rules, orig_rules, terms, nonterms) ++
-                  generate(length, prev, curr, next, rules_tail, orig_rules, terms, nonterms)
-                [head | tail] ->
-                  generate(length, [], [], prev ++ subst ++ next, orig_rules, orig_rules, terms, nonterms) ++
-                  generate(length, prev, curr ++ [head], tail, orig_rules, orig_rules, terms, nonterms) ++
-                  generate(length, prev ++ curr, [head], tail, orig_rules, orig_rules, terms, nonterms) ++
-                  generate(length, prev, curr, next, rules_tail, orig_rules, terms, nonterms)
-              end
-            [_ | rules_tail] ->
-              # Aplicar iteração das regras
-              generate(length, prev, curr, next, rules_tail, orig_rules, terms, nonterms)
-          end
+        [{orig, dest} | rules_tail] ->
+          # Verificar se o lado esquerdo da regra está contido na entrada
+          if Enum.take(next, Enum.count(orig)) == orig do
+            # Substituir regra
+            generate(length, [], prev ++ dest ++ Enum.drop(next, Enum.count(orig)), orig_rules, orig_rules, terms, nonterms)
+          else
+            []
+          end ++
+          # Iterar regras
+          generate(length, prev, next, rules_tail, orig_rules, terms, nonterms)
       end
-    end
-  end
-
-  defp size(list) do
-    case list do
-      [] -> 0
-      [_ | tail] -> 1 + size(tail)
-    end
-  end
-
-  defp is_made_of?(word, terms) do
-    case word do
-      [] -> true
-      [head | tail] ->
-        if contains?(head, terms) do
-          is_made_of?(tail, terms)
-        else
-          false
-        end
-    end
-  end
-
-  defp contains?(elem, list) do
-    case list do
-      [] -> false
-      [^elem | _] -> true
-      [_ | tail] -> contains?(elem, tail)
-    end
-  end
-
-  defp remove_duplicates_of(elem, list) do
-    case list do
-      [] -> []
-      [^elem | tail] -> remove_duplicates_of(elem, tail)
-      [head | tail] -> [head] ++ remove_duplicates_of(elem, tail)
-    end
-  end
-
-  defp get_smallest_element(elem, list) do
-    case list do
-      [] -> {elem, list}
-      [head | tail] ->
-        if head < elem do
-          {smallest, new_tail} = get_smallest_element(head, tail)
-          {smallest, [elem] ++ new_tail}
-        else
-          {smallest, new_tail} = get_smallest_element(elem, tail)
-          {smallest, [head] ++ new_tail}
-        end
     end
   end
 end
