@@ -45,7 +45,7 @@ defmodule Grammar do
 
   """
   def generate_all(length, start, rules, terms, nonterms) do
-    generate(length, [], [], [start], rules, terms, nonterms) |> unique() |> sort()
+    generate(length, [], [], [start], rules, rules, terms, nonterms) |> unique() |> sort()
   end
 
   @doc """
@@ -86,7 +86,7 @@ defmodule Grammar do
     end
   end
 
-  defp generate(length, prev, curr, next, rules, terms, nonterms) do
+  defp generate(length, prev, curr, next, rules, orig_rules, terms, nonterms) do
     # Parar recursão quando a palavra for maior que o tamanho máximo
     if size(next) > length do
       []
@@ -103,28 +103,35 @@ defmodule Grammar do
               end
             [head | tail] ->
               # Mover primeiro valor de next para curr
-              generate(length, prev, [head], tail, rules, terms, nonterms)
+              generate(length, prev, [head], tail, rules, orig_rules, terms, nonterms)
           end
         [_ | _] -> # curr com um ou mais elementos
-          if is_subrule?(curr, rules) do
-            # Aplicar recursão + iteração
-            case next do
-              [] ->
-                replace_rules(length, prev, curr, next, rules, rules, terms, nonterms) ++
-                generate(length, prev ++ curr, [], [], rules, terms, nonterms)
-              [head | tail] ->
-                replace_rules(length, prev, curr, next, rules, rules, terms, nonterms) ++
-                generate(length, prev, curr ++ [head], tail, rules, terms, nonterms) ++
-                generate(length, prev ++ curr, [head], tail, rules, terms, nonterms)
-            end
-          else
-            # Aplicar iteração
-            case next do
-              [] ->
-                generate(length, prev ++ curr, [], [], rules, terms, nonterms)
-              [head | tail] ->
-                generate(length, prev ++ curr, [head], tail, rules, terms, nonterms)
-            end
+          case rules do
+            [] ->
+              # Aplicar iteração da cadeia
+              case next do
+                [] ->
+                  generate(length, prev ++ curr, [], [], orig_rules, orig_rules, terms, nonterms)
+                [head | tail] ->
+                  generate(length, prev, curr ++ [head], tail, orig_rules, orig_rules, terms, nonterms) ++
+                  generate(length, prev ++ curr, [head], tail, orig_rules, orig_rules, terms, nonterms)
+              end
+            [{^curr, subst} | rules_tail] ->
+              # Aplicar recursão + iteração das regras
+              case next do
+                [] ->
+                  generate(length, [], [], prev ++ subst ++ next, orig_rules, orig_rules, terms, nonterms) ++
+                  generate(length, prev ++ curr, [], [], orig_rules, orig_rules, terms, nonterms) ++
+                  generate(length, prev, curr, next, rules_tail, orig_rules, terms, nonterms)
+                [head | tail] ->
+                  generate(length, [], [], prev ++ subst ++ next, orig_rules, orig_rules, terms, nonterms) ++
+                  generate(length, prev, curr ++ [head], tail, orig_rules, orig_rules, terms, nonterms) ++
+                  generate(length, prev ++ curr, [head], tail, orig_rules, orig_rules, terms, nonterms) ++
+                  generate(length, prev, curr, next, rules_tail, orig_rules, terms, nonterms)
+              end
+            [_ | rules_tail] ->
+              # Aplicar iteração das regras
+              generate(length, prev, curr, next, rules_tail, orig_rules, terms, nonterms)
           end
       end
     end
@@ -134,17 +141,6 @@ defmodule Grammar do
     case list do
       [] -> 0
       [_ | tail] -> 1 + size(tail)
-    end
-  end
-
-  defp replace_rules(length, prev, curr, next, rules, orig_rules, terms, nonterms) do
-    case rules do
-      [] -> []
-      [{^curr, output} | tail] ->
-        generate(length, [], [], prev ++ output ++ next, orig_rules, terms, nonterms) ++
-        replace_rules(length, prev, curr, next, tail, orig_rules, terms, nonterms)
-      [_ | tail] ->
-        replace_rules(length, prev, curr, next, tail, orig_rules, terms, nonterms)
     end
   end
 
@@ -165,25 +161,6 @@ defmodule Grammar do
       [] -> false
       [^elem | _] -> true
       [_ | tail] -> contains?(elem, tail)
-    end
-  end
-
-  defp is_subrule?(word, rules) do
-    case rules do
-      [] -> false
-      [{head, _} | tail] -> is_start?(word, head) or is_subrule?(word, tail)
-    end
-  end
-
-  defp is_start?(sublist, list) do
-    case sublist do
-      [] -> true
-      [head | subtail] ->
-        case list do
-          [] -> false
-          [^head | tail] -> is_start?(subtail, tail)
-          [_ | _] -> false
-        end
     end
   end
 
