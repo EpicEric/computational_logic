@@ -45,10 +45,10 @@ defmodule Grammar do
 
   """
   def generate_all(length, start, rules, terms, nonterms) do
-    generate(length, [], [start], rules, rules, terms, nonterms) |> Enum.uniq() |> Enum.sort()
+    generate(length, [], [start], rules, rules, [], terms, nonterms) |> Enum.uniq() |> Enum.sort()
   end
 
-  defp generate(length, prev, next, rules, orig_rules, terms, nonterms) do
+  defp generate(length, prev, next, rules, orig_rules, path, terms, nonterms) do
     # Parar recursão quando a palavra for maior que o tamanho máximo
     if Enum.count(next) > length do
       []
@@ -65,18 +65,24 @@ defmodule Grammar do
               end
             [head | tail] ->
               # Mover primeiro valor de next para prev
-              generate(length, prev ++ [head], tail, orig_rules, orig_rules, terms, nonterms)
+              generate(length, prev ++ [head], tail, orig_rules, orig_rules, path, terms, nonterms)
           end
         [{orig, dest} | rules_tail] ->
           # Verificar se o lado esquerdo da regra está contido na entrada
           if Enum.take(next, Enum.count(orig)) == orig do
-            # Substituir regra
-            generate(length, [], prev ++ dest ++ Enum.drop(next, Enum.count(orig)), orig_rules, orig_rules, terms, nonterms)
+            new_next = prev ++ dest ++ Enum.drop(next, Enum.count(orig))
+            # Evitar loop infinito de substituições
+            if Enum.member?(path, new_next) do
+              []
+            else
+              # Substituir regra
+              generate(length, [], new_next, orig_rules, orig_rules, path ++ [new_next], terms, nonterms)
+            end
           else
             []
           end ++
           # Iterar regras
-          generate(length, prev, next, rules_tail, orig_rules, terms, nonterms)
+          generate(length, prev, next, rules_tail, orig_rules, path, terms, nonterms)
       end
     end
   end

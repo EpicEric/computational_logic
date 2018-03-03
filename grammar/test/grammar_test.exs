@@ -111,4 +111,29 @@ defmodule GrammarTest do
       [1, 2, 3]
     ]
   end
+
+  test "generate context-sensitive grammar with empty element" do
+    # #x == #y
+    assert Grammar.generate_all(4, :S, [
+      {[:S], []},
+      {[:S], [:Z]},
+      {[:Z], [:X, :Y]},
+      {[:Z], [:X, :Y, :Z]},
+      {[:X, :Y], [:Y, :X]},
+      {[:Y, :X], [:X, :Y]},
+      {[:X], [:x]},
+      {[:Y], [:y]}
+    ], [:x, :y], [:S, :X, :Y, :Z]) ==
+    [
+      [],
+      [:x, :x, :y, :y],
+      [:x, :y],
+      [:x, :y, :x, :y],
+      [:x, :y, :y, :x],
+      [:y, :x],
+      [:y, :x, :x, :y],
+      [:y, :x, :y, :x],
+      [:y, :y, :x, :x]
+    ]
+  end
 end
