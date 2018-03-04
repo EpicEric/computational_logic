@@ -588,7 +588,10 @@ Quanto ao programa desenvolvido, também avaliamos que, para melhorar a sua
 execução, o próximo passo seria evitar redundância de aplicação de regras de
 produção em uma cadeia (i.e. somente ignorar uma regra $A \rightarrow ...$ se
 houver alguma regra $AB \rightarrow ...$ na construção da gramática; caso
-contrário, parar a iteração).
+contrário, parar a iteração). Porém, tal alternativa exige refatoração de todo
+o código para armazenar um estado global, e deve considerar muitos casos de
+borda como a ordem de produção de regras diferentes, que nem sempre é a mesma
+ordem de leitura da cadeia.
 
 
 % An example of a floating figure using the graphicx package.
