@@ -470,11 +470,11 @@ Elixir, programação funcional, recursão, gramática, hierarquia de Chomsky.
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{O} objetivo deste exercício é criar um programa capaz de
-determinar se uma uma dada cadeia pertence a uma dada linguagem recursiva. A
+\IEEEPARstart{N}{este} exercício, tivémos como objetivo criar um programa capaz
+de determinar se uma uma dada cadeia pertence a uma dada linguagem recursiva. A
 solução implementada para resolver esse problema foi a sugerida na proposta do
 exercício, e consiste em gerar todas as formas sentenciais da gramática que
-sejam menores ou iguais à cadeia a ser verificada.
+tenham tamanho menor ou igual à cadeia a ser verificada.
 
 \section{Desenvolvimento}
 Usamos a linguagem de programação Elixir para desenvolver o algoritmo. Por se
@@ -485,13 +485,15 @@ funções foram muito úteis para manipular dados em listas e simplificaram
 bastante o código.
 
 \subsubsection{Modelagem}
-A função principal do nosso programa é generates\_word/5. Ela recebe como
-parâmetro uma cadeia (representada por uma lista) e uma gramática. A gramática
+A função desejada no nosso programa é a generates\_word?/5. Ela recebe como
+parâmetro uma cadeia (representada por uma lista) e uma gramática. Porém, o
+principal da lógica será realizado na função generate\_all/5, que recebe um
+comprimento máximo de cadeia e uma gramática. Em ambas, a gramática
 é construída pelos outros 4 parâmetros, a saber: o não-terminal inicial; 
 as regras (representadas por uma lista de tuplas), os terminais (representados
-por uma lista) e os não terminais (representados por uma lista). Cadeia vazia é
-representada por uma lista vazia. O tipo dos elementos terminais é indiferente
-para nosso programa.
+por uma lista) e os não terminais (representados por uma lista). Uma cadeia
+vazia é representada por uma lista vazia. O tipo dos elementos terminais é
+indiferente para nosso programa.
 
 \subsubsection{Algoritmo}
 Para esta atividade, o desenvolvimento do algoritmo foi realizado em etapas de
@@ -558,25 +560,35 @@ estruturas das regras de produção.
 
 
 \section{Resultados}
-TODO: Falar que os testes realizados bateram com o esperado e que o algoritmo
-foi capaz de gerar corretamente a linguagem de gramáticas até sensíveis ao
-contexto, e identificar se uma palavra pertencia à mesma.
+Os testes realizados bateram com o esperado, mostrando a sua funcionalidade com
+nosso programa. Assim, o algoritmo foi capaz de gerar corretamente as linguagens
+de gramáticas desde regulares até sensíveis ao contexto, e identificar se uma
+palavra pertencia à mesma.
 
 \subsubsection{Problemas identificados}
-TODO: Falar que testes com gramáticas mais complexas podem demorar muito tempo
-para comprimentos grandes, e que em alguns casos podem causar estouro de pilha,
-como uma linguagem sensível ao contexto com nº x == nº y == nº z para
-comprimento de cadeia $\geq$ 6.
+Nos nossos testes com gramáticas mais complexas, a execução pode demorar muito
+tempo para comprimentos grandes, e que em alguns casos podem causar estouro de
+pilha, como para a linguagem sensível ao contexto $(x|y|z)^*$ com
+$n^o x = n^o y = n^o z$ para comprimento de cadeia $\geq$ 6.
 
-TODO: Falar também que foram realizada uma implementação seguindo a proposta do
-enunciado -- gerar todas as formas setenciais parciais da gramática
+Além disso, como proposto no enunciado, foi realizada uma implementação
+alternativa -- gerar todas as formas setenciais parciais da gramática
 recursivamente e analisar a alteração --, mas foi detectada degradação tanto
 na velocidade do programa quanto na quantidade de memória para os mesmos testes,
-já que uma mesma regra seria aplicada múltiplas vezes a cada iteração.
+já que uma mesma regra seria aplicada múltiplas vezes a cada iteração. Por isso,
+optamos pela solução desenvolvida anteriormente.
 
 
 \section{Conclusão}
-TODO: Desenvolvemos conceitos sobre gramáticas e programação funcional,
+Esse exercício programa nos permitiu ampliar e desenvolver nossos conceitos
+em matemática discreta sobre gramáticas, e pela linguagem Elixir, melhorar
+nossoso conhecimentos de programação funcional.
+
+Quanto ao programa desenvolvido, também avaliamos que, para melhorar a sua
+execução, o próximo passo seria evitar redundância de aplicação de regras de
+produção em uma cadeia (i.e. somente ignorar uma regra $A \rightarrow ...$ se
+houver alguma regra $AB \rightarrow ...$ na construção da gramática; caso
+contrário, parar a iteração).
 
 
 % An example of a floating figure using the graphicx package.
