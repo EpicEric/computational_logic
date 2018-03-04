@@ -470,22 +470,28 @@ Elixir, programação funcional, recursão, gramática, hierarquia de Chomsky.
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{T}{odo} TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
-
-TODO: Descrever o problema enunciado e a solução motivada (gerar palavras da
-gramática e verificar o pertencimento à lista gerada).
-
+\IEEEPARstart{O} objetivo deste exercício é criar um programa capaz de
+determinar se uma uma dada cadeia pertence a uma dada linguagem recursiva. A
+solução implementada para resolver esse problema foi a sugerida na proposta do
+exercício, e consiste em gerar todas as formas sentenciais da gramática que
+sejam menores ou iguais à cadeia a ser verificada.
 
 \section{Desenvolvimento}
-TODO: Desenvolver loops por recursão com pattern matching; Usar biblioteca
-padrão Enum para funções auxiliares simples como sort(), filter(), all?(),
-count(), dentre outras.
+Usamos a linguagem de programação Elixir para desenvolver o algoritmo. Por se
+tratar de uma linguagem funcional, escrevemos os \textit{loops} como recursões
+com \textit{pattern matching}. Utilizamos também funções algumas da biblioteca
+padrão Enum, como sort/1, filter/2, all?/2, count/1, dentre outras. Essas
+funções foram muito úteis para manipular dados em listas e simplificaram
+bastante o código.
 
 \subsubsection{Modelagem}
-TODO: Cadeias como listas -- cadeia vazia como lista vazia --, regras de
-produção como listas de tuplas, conjuntos de terminais e não-terminais como
-listas de elementos de qualquer tipo.
+A função principal do nosso programa é generates\_word/5. Ela recebe como
+parâmetro uma cadeia (representada por uma lista) e uma gramática. A gramática
+é construída pelos outros 4 parâmetros, a saber: o não-terminal inicial; 
+as regras (representadas por uma lista de tuplas), os terminais (representados
+por uma lista) e os não terminais (representados por uma lista). Cadeia vazia é
+representada por uma lista vazia. O tipo dos elementos terminais é indiferente
+para nosso programa.
 
 \subsubsection{Algoritmo}
 Para esta atividade, o desenvolvimento do algoritmo foi realizado em etapas de
