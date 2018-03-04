@@ -412,12 +412,13 @@
 % in the abstract or keywords.
 \IEEEtitleabstractindextext{%
 \begin{abstract}
-Nesse relatório, TODO.
+Nesse relatório, criamos um algoritmo que gera palavras a partir de uma 
+gramática sensível ao contexto, para reconhecimento de cadeias.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
 \begin{IEEEkeywords}
-Elixir, TODO.
+Elixir, programação funcional, recursão, gramática, hierarquia de Chomsky.
 \end{IEEEkeywords}}
 
 
@@ -472,34 +473,104 @@ Elixir, TODO.
 \IEEEPARstart{T}{odo} TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
 TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
 
+TODO: Descrever o problema enunciado e a solução motivada (gerar palavras da
+gramática e verificar o pertencimento à lista gerada).
+
 
 \section{Desenvolvimento}
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
+TODO: Desenvolver loops por recursão com pattern matching; Usar biblioteca
+padrão Enum para funções auxiliares simples como sort(), filter(), all?(),
+count(), dentre outras.
 
 \subsubsection{Modelagem}
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
+TODO: Cadeias como listas -- cadeia vazia como lista vazia --, regras de
+produção como listas de tuplas, conjuntos de terminais e não-terminais como
+listas de elementos de qualquer tipo.
 
 \subsubsection{Algoritmo}
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
+Para esta atividade, o desenvolvimento do algoritmo foi realizado em etapas de
+acordo com o objetivo final e as necessidades de projeto.
+
+A lógica recursiva por trás do programa será a seguinte:
+
+\begin{enumerate}
+  \item Começar a partir do não-terminal inicial.
+  \item Procurar possíveis substituições de regras de produção, e ramificar a
+  execução da seguinte forma:
+  \begin{itemize}
+    \item Substituir a regra de produção e iterar por toda a cadeia novamente.
+    \item Continuar iterando pela cadeia, sem 
+  \end{itemize}
+  \item Realizar as substituições até ultrapassar o comprimento máximo.
+  \item Executar os itens 2 e 3 até não haver mais regras de substituição em
+  cada palavra.
+  \item Retornar apenas as palavras formadas por terminais.
+\end{enumerate}
+
+Dessa forma, podemos realizar múltiplas substituições de regras de produção em
+uma cadeia, permitindo a criação de cadeias mais elaboradas.
+
+Em uma primeira etapa, o algoritmo desenvolvido simplesmente varria cada letra
+da palavra e verificava se era um não-terminal. Encontrado um, buscaria todas as
+regras correspondentes da lista e realizaria as substituições adequadas.
+Desta forma, o algoritmo era simples e executava corretamente para gramáticas
+livres de contexto e regulares. Porém, para o caso de múltiplos não-terminais
+do lado esquerdo de uma regra, ou terminais e não-terminais mistos, como é o
+caso de gramáticas sensíveis ao contexto, o algoritmo não funciona.
+
+Dessa forma, na segunda etapa, alteramos a lógica para iterar sobre subcadeias
+da cadeia atual, e verificar se há regra(s) equivalente(s) para a subcadeia
+analisada. Assim, o algoritmo funciona para todas as gramáticas esperadas.
+Porém, agora há muitas verificações sendo feitas, aumentando muito a pilha de
+recursão do programa, o que causa estouro de pilha para gramáticas complexas
+com tamanho máximo de cadeia relativamente pequeno.
+
+A solução encontrada na terceira etapa foi iterar sobre as regras de produção,
+encontrando subcadeias correspondentes na cadeia atual de forma inteligente
+(por exemplo, buscando subcadeias com o mesmo comprimento do lado esquerdo
+da regra). Assim, os tempos de execução obtidos são muito melhores, e a maior
+parte dos estouros de pilha foram resolvidos.
+
+Porém, percebemos que havia um caso nas gramáticas sensíveis ao contexto que
+poderia gerar loop infinito, no caso de regras circulares (por exemplo,
+$AB \rightarrow BA$ e $BA \rightarrow AB$). Para isso, numa quarta etapa,
+implementamos uma variável que acompanha o caminho realizado até então e
+evita que um estado anterior seja alcançado posteriormente. Isso evita qualquer
+loop como descrito na construção da cadeia, mas piora um pouco a execução do
+programa.
 
 \subsubsection{Testes}
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
+Serão realizados dois tipos de testes. O primeiro tipo se preocupa em verificar
+as cadeias geradas por uma gramática e comprimento fornecidos. O segundo
+analisa a funcionalidade do método de pertencimento da palavra ao conjunto de
+cadeias gerado pela gramática.
+
+Os testes desenvolvidos possuirão gramáticas dos três tipos da hierarquia de
+Chomsky que nos concernem: sensíveis ao contexto, livres de contexto e
+regulares. Desta forma, poderemos identificar o funcionamento para diferentes
+estruturas das regras de produção.
 
 
 \section{Resultados}
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
+TODO: Falar que os testes realizados bateram com o esperado e que o algoritmo
+foi capaz de gerar corretamente a linguagem de gramáticas até sensíveis ao
+contexto, e identificar se uma palavra pertencia à mesma.
+
+\subsubsection{Problemas identificados}
+TODO: Falar que testes com gramáticas mais complexas podem demorar muito tempo
+para comprimentos grandes, e que em alguns casos podem causar estouro de pilha,
+como uma linguagem sensível ao contexto com nº x == nº y == nº z para
+comprimento de cadeia $\geq$ 6.
+
+TODO: Falar também que foram realizada uma implementação seguindo a proposta do
+enunciado -- gerar todas as formas setenciais parciais da gramática
+recursivamente e analisar a alteração --, mas foi detectada degradação tanto
+na velocidade do programa quanto na quantidade de memória para os mesmos testes,
+já que uma mesma regra seria aplicada múltiplas vezes a cada iteração.
 
 
 \section{Conclusão}
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO.
-
-
+TODO: Desenvolvemos conceitos sobre gramáticas e programação funcional,
 
 
 % An example of a floating figure using the graphicx package.
@@ -680,6 +751,13 @@ Elixir.
 \emph{Introduction}.
 Disponível em: https://elixir-lang.org/getting-started/introduction.html.
 Acesso em 7 de fevereiro de 2018.
+
+\bibitem{enum}
+Elixir.
+\emph{Enum}.
+Disponível em: https://hexdocs.pm/elixir/Enum.html
+Acesso em 24 de fevereiro de 2018.
+
 %\bibitem{IEEEhowto:kopka}
 %H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
 %  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
