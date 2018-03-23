@@ -21,9 +21,9 @@ defmodule Automaton do
 
   ## Examples
 
-      iex> Automaton.dfa_generates_word?(%Automaton{transitions: [[:q0, :a, :q1], [:q1, :a, :q2], [:q2, :a, :q2]], initial_state: :q0, accept_states: [:q2]}, [:a])
+      iex> Automaton.dfa_generates_word?(%Automaton{transitions: [{:q0, :a, :q1}, {:q1, :a, :q2}, {:q2, :a, :q2}], initial_state: :q0, accept_states: [:q2]}, [:a])
       false
-      iex> Automaton.dfa_generates_word?(%Automaton{transitions: [[:q0, :a, :q1], [:q1, :a, :q2], [:q2, :a, :q2]], initial_state: :q0, accept_states: [:q2]}, [:a, :a])
+      iex> Automaton.dfa_generates_word?(%Automaton{transitions: [{:q0, :a, :q1}, {:q1, :a, :q2}, {:q2, :a, :q2}], initial_state: :q0, accept_states: [:q2]}, [:a, :a])
       true
 
   """
@@ -33,10 +33,32 @@ defmodule Automaton do
       Enum.reduce( # Use reduce to find the last state
         word, # Enumerable: Input word (list of symbols)
         automaton.initial_state, # Accumulator: Initial state
-        fn(element, current_state) -> Enum.at(Enum.find( # Get transition for current state and current symbol
+        fn(symbol, current_state) -> elem(Enum.find( # Get transition for current state and current symbol
           automaton.transitions,
           fn(transition) ->
-            Enum.at(transition, 0) == current_state and Enum.at(transition, 1) == element
-          end), 2) end)) # Get third element of transition (next state)
+            elem(transition, 0) == current_state and elem(transition, 1) == symbol
+          end), 2) end)) # Get third element of appropriate transition (next state)
+  end
+
+  def convert_nfa_to_dfa(automaton) do
+    elements = Enum.sort(Enum.uniq(Enum.map(automaton.transitions, fn(x) -> elem(x, 1) end)))
+    %Automaton{transitions: [], initial_state: [automaton.initial_state], accept_states: []}
+  end
+
+  def get_reachable_states(current_states, symbol, transitions) do
+    new_states = Enum.sort(Enum.uniq( # Format list to clean order
+      Enum.reduce(
+        Enum.map(current_states, fn(state) ->
+          Enum.map(
+            Enum.filter(transitions, fn(trans) -> elem(trans, 0) == state and elem(trans, 1) == symbol end), # Filter applicable transitions
+            fn(transition) -> elem(transition, 2) end) # Get state for filtered transitions
+        end),
+      [], fn(x, acc) -> acc ++ x end # Join all reachable states in a single list
+      ) ++ if symbol == nil do current_states else [] end)) # On an empty symbol transition, include current states
+    if symbol == nil and new_states == current_states do # End iterations when we can no longer reach any new states
+      current_states
+    else
+      get_reachable_states(new_states, nil, transitions) # Recursively try to find more states to reach
+    end
   end
 end
