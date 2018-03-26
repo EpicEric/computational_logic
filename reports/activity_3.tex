@@ -51,6 +51,8 @@
 
 
 \documentclass[journal,transmag]{IEEEtran}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
 %
 % If IEEEtran.cls has not been installed into the LaTeX system files,
 % manually specify the path to it like:
@@ -354,14 +356,14 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Terceiro~Exercício~Programa}
+\title{Terceiro Exercício Programa}
 
 
 
 % author names and affiliations
 % transmag papers use the long conference author name format.
 
-\author{\IEEEauthorblockN{Eric~Rodrigues~Pires, Mateus~Nakajo~de~Mendonça
+\author{\IEEEauthorblockN{Eric Rodrigues Pires, Mateus Nakajo de Mendonça
 %\IEEEauthorrefmark{1}
 }}
 %Homer Simpson\IEEEauthorrefmark{2},
@@ -379,8 +381,8 @@
 
 
 % The paper headers
-\markboth{Lógica~Computacional, Terceiro~Exercício~Programa, Março~de~2018}%
-{PIRES,~E.~R., MENDONÇA,~M.~N.: Terceiro~Exercício~Programa}
+\markboth{Lógica Computacional,~Terceiro Exercício Programa,~Março de 2018}%
+{PIRES,~E.~R., MENDONÇA,~M.~N.:~Terceiro Exercício Programa}
 % The only time the second header will appear is for the odd numbered pages
 % after the title page when using the twoside option.
 % 
@@ -412,12 +414,14 @@
 % in the abstract or keywords.
 \IEEEtitleabstractindextext{%
 \begin{abstract}
-Nesse relatório, TODO.
+Nesse relatório, criamos um simulador de autômato finito determinístico e 
+não-determinístico em Elixir.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
 \begin{IEEEkeywords}
-Elixir, programação funcional, recursão, autômato finito, determinismo.
+Elixir, programação funcional, autômato finito determinístico, autômato finito
+não-determinístico.
 \end{IEEEkeywords}}
 
 
@@ -469,41 +473,146 @@ Elixir, programação funcional, recursão, autômato finito, determinismo.
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{L}{orem} ipsum dolor sit amet lorem ipsum dolor sit amet lorem
-ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+\IEEEPARstart{N}{este} exercício, tivemos como objetivo construir um programa
+capaz de determinar se uma cadeia pertence a uma linguagem aceitada por um
+autômato finito determinístico ou por um autômato finito não-determinístico.
+Um autômato finito determinístico \textit{M} é definido como:
+\begin{equation}
+  M = (Q, \Sigma, \delta, q_0, F)
+\end{equation}
+onde \textit{Q} é o conjunto de estados,
+$\Sigma$ o alfabeto de entrada ($\epsilon \notin \Sigma$),
+$\delta$ a função de transição de estados,
+$q_0$ o estado inicial, e 
+\textit{F} o conjunto de estados de aceitação.
 
+A função de transição de estados é da forma:
+\begin{equation}
+  \delta(q, x) = q'
+\end{equation}
+
+Ela indica que se o estado atual for \textit{q} e o símbolo de entrada 
+\textit{x}, o próximo estado é \textit{q'}. Visualmente, podemos representar
+essa transição por:
+
+\begin{figure}[!h]
+  \centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+  \node[state] (q_0)   {$q_0$}; 
+  \node[state] (q_1) [right=of q_0] {$q'$}; 
+   \path[->]
+   (q_0) edge  node {x} (q_1);
+  \end{tikzpicture}
+\end{figure}
+
+Uma cadeia é aceita por um autômato finito determinístico se ao final de todas
+as transições de estados, o estado final for de aceitação.
+
+Um autômato finito não-determinístico é definido da mesma forma, mas a função
+de transição de estados é diferente. Podem existir transições da forma:
+\begin{equation}
+  \delta(q, x) = \{q_1, q_2, ..., q_k\}
+\end{equation}
+
+Ou seja, se o estado atual for \textit{q} e o símbolo de entrada \textit{x}, o
+próximo estado pode ser qualquer $q_i \in \{q_1, q_2, ..., q_k\}$. Além disso,
+podem existir transições da forma: 
+\begin{equation}
+  \delta(q, \epsilon) = q'
+\end{equation}
+Onde $\epsilon$ é a cadeia vazia.
+
+É possível provar que para todo autômato finito não-determinístico existe um
+autômato finito determinístico que define a mesma linguagem \cite{nda}.
 
 \section{Desenvolvimento}
-Lorem.
+Usamos a linguagem de programação Elixir para desenvolver o algoritmo. Por se
+tratar de uma linguagem funcional, escrevemos os \textit{loops} como recursões
+de cauda. Utilizamos várias funções da biblioteca padrão Enum, como map/2,
+sort/1, filter/2, all?/2, count/1, dentre outras. Essas funções foram muito
+úteis para manipular dados em listas e simplificaram bastante o código.
 
 \subsubsection{Modelagem}
-Lorem.
+Ao longo do nosso programa, os autômatos são representados por uma lista
+composta por uma função de transição, um estado inicial e estados de aceitação.
+As transições são representadas por tuples. Transições com $\epsilon$ são
+representadas por \textit{nil}. As cadeias são representadas por listas. Uma
+cadeia vazia é representada por uma lista vazia.
+
+As duas funções principais do nosso programa são dfa\_generates\_word/2 e 
+nfa\_generates\_word/2. A primeira retorna se uma dada cadeia pertence a
+linguagem gerada por um autômato determinístico finito dado. A segunda faz a
+mesma coisa mas para um autômato não-determinístico. Ela faz uso internamente da
+função convert\_nfa\_to\_dfa/1, que recebe um autômato não-determinístico finito
+e o converte para um determinístico.
+
 
 \subsubsection{Algoritmo}
-Lorem.
+A lógica para determinar se uma cadeia pertence à linguagem gerada por um
+autômato finito determinístico foi a seguinte:
 
 \begin{enumerate}
-  \item Lorem.
-  \begin{itemize}
-    \item Lorem.
-  \end{itemize}
+\item A partir do estado inicial $q0$, achar o próximo estado para o primeiro 
+símbolo da cadeia de entrada.
+\item Repetir esse processo até consumir toda a cadeia
+\item Verificar se o estado final é um estado de aceitação.
+\end{enumerate}
+Para o caso de autômatos finitos não-determinísticos, primeiramente os convertemos em
+determinísticos e em seguida aplicamos o algoritmo mostrado acima.
+
+Para converter o autômato finito não-determinístico em determinístico, aplicamos o
+seguinte algoritmo:
+
+\begin{enumerate}
+\item Determinar o alfabeto a partir das transições do autômato 
+não-determinístico.
+\item Calcular $\delta^*(q_0, \epsilon) = \{q_0, K\}$, ou seja a função de 
+transição de estado estendida para o estado inicial e a cadeia vazia. 
+$\{q_0, K\}$ será o estado inicial do autômato determinístico.
+\item Para cada estado $\{q_i, q_j, ..., q_m\}$, calcular $\delta^*(q_i, a) \cup
+\delta^*(q_j, a) \cup ... \cup \delta^*(q_m, a) = \{q'_k, q'_l, ..., q'_n\}$, e
+adicionar nas regras de transição.
+\item Repetir para cada estado do autômato determinístico e símbolos do
+alfabeto até não haver mais estados a serem adicionados no autômato
+determinístico.
+\item Para cada estado $\{q_i, q_j, ..., q_m\}$, ele será um estado de aceitação
+se algum $q_j$ no autômato não-determinístico for de aceitação.
 \end{enumerate}
 
-Lorem.
+Outra alternativa para simular um autômato finito não-determinístico seria
+calcular todos os possíveis estados finais para a cadeia de entrada, e em
+seguida verificar se algum deles é um estado de aceitação. Esse processo é
+mais complexo do que no caso determinístico. Sendo assim, avaliamos que é mais
+eficiente fazer um pré-processamento na forma de 
+converter o autômato finito não-determinístico para determinístico, e então
+todas as cadeias a serem analisadas para aquele autônomo podem usar um algoritmo
+mais rápido.
 
 \subsubsection{Testes}
-Lorem.
-
+Realizamos três tipos de testes. No primeiro, verificamos se o autômato
+determinístico aceita apenas as cadeias pertencentes à linguagem definida por
+ele, no caso, a linguagem da expressão regular $a^*|(a^*b^*c^*)^*$. Repetimos esse 
+teste para um autômato não-determinístico que aceita cadeias da linguagem
+definida por $0^*|(01)^*$. No último teste, verificamos se a função de conversão
+de autômato não-determinístico para determinístico funciona corretamente.
 
 \section{Resultados}
-Lorem.
-
+Os testes realizados bateram com o esperado, de acordo com a especificação do 
+exercício. Assim, o algoritmo foi capaz de simular autômatos finitos
+determinísticos e não-determinísticos. A função de conversão de autômatos
+não-determinísticos para autômatos determinísticos também funcionou
+corretamente.
 
 \section{Conclusão}
-Lorem.
+Esse  exercício programa nos permitiu ampliar e desenvolver nossos conceitos
+em matemática discreta sobre gramáticas, autômatos e pela linguagem Elixir,
+melhorar nossos conhecimentos de programação funcional.
+Quanto ao programa desenvolvido, avaliamos que conseguimos simular o
+funcionamento de autômatos finitos de forma eficiente e precisa. Os testes que
+criamos nos deram confiança a respeito da corretude do algoritmo implementado.
+Observamos também que o algoritmo para simular um autômato finito determinístico
+é bastante simples. Sua implementação foi facilitada pelos recursos de linguagem
+funcional do Elixir. 
 
 
 % An example of a floating figure using the graphicx package.
@@ -667,49 +776,49 @@ Lorem.
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
 \begin{thebibliography}{1}
-
-\bibitem{learn}
-ALMEIDA,~Ulisses.
-\emph{Learn Functional Programming with Elixir}.
-The Pragmatic Bookshelf, 2018.
-
-\bibitem{functional}
-FORD, Neal.
-\emph{Functional Thinking}.
-Disponível em: https://www.infoq.com/presentations/Functional-Thinking.
-Acesso em 7 de fevereiro de 2018.
-
-\bibitem{introduction}
-Elixir.
-\emph{Introduction}.
-Disponível em: https://elixir-lang.org/getting-started/introduction.html.
-Acesso em 7 de fevereiro de 2018.
-
-\bibitem{enum}
-Elixir.
-\emph{Enum}.
-Disponível em: https://hexdocs.pm/elixir/Enum.html
-Acesso em 24 de fevereiro de 2018.
-
-\bibitem{nda}
-BUSCH, Konstantin.
-\emph{Nondeterministic Finite Automata}.
-Disponível em: http://www.csc.lsu.edu/~busch/courses/theorycomp/slides/NFA.ppt.
-Acesso em 20 de março de 2018.
-
-\bibitem{structs}
-Elixir.
-\emph{Structs}.
-Disponível em: https://elixir-lang.org/getting-started/structs.html
-Acesso em 22 de março de 2018.
-
-%\bibitem{IEEEhowto:kopka}
-%H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-%  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-
-\end{thebibliography}
-
-% biography section
+  
+  \bibitem{learn}
+  ALMEIDA,~Ulisses.
+  \emph{Learn Functional Programming with Elixir}.
+  The Pragmatic Bookshelf, 2018.
+  
+  \bibitem{functional}
+  FORD, Neal.
+  \emph{Functional Thinking}.
+  Disponível em: https://www.infoq.com/presentations/Functional-Thinking.
+  Acesso em 7 de fevereiro de 2018.
+  
+  \bibitem{introduction}
+  Elixir.
+  \emph{Introduction}.
+  Disponível em: https://elixir-lang.org/getting-started/introduction.html.
+  Acesso em 7 de fevereiro de 2018.
+  
+  \bibitem{enum}
+  Elixir.
+  \emph{Enum}.
+  Disponível em: https://hexdocs.pm/elixir/Enum.html
+  Acesso em 24 de fevereiro de 2018.
+  
+  \bibitem{nda}
+  BUSCH, Konstantin.
+  \emph{Nondeterministic Finite Automata}.
+  Disponível em: http://www.csc.lsu.edu/~busch/courses/theorycomp/slides/NFA.ppt.
+  Acesso em 20 de março de 2018.
+  
+  \bibitem{structs}
+  Elixir.
+  \emph{Structs}.
+  Disponível em: https://elixir-lang.org/getting-started/structs.html
+  Acesso em 22 de março de 2018.
+  
+  %\bibitem{IEEEhowto:kopka}
+  %H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+  %  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+  
+ \end{thebibliography}
+  
+  % biography section
 % 
 % If you have an EPS/PDF photo (graphicx package needed) extra braces are
 % needed around the contents of the optional argument to biography to prevent
