@@ -57,6 +57,7 @@ defmodule AutomatonTest do
       transitions: [
         {:q0, nil, :q1},
         {:q0, nil, :q2},
+        {:q0, nil, :q0},
         {:q1, 0, :q1},
         {:q2, 0, :q3},
         {:q3, 1, :q4},

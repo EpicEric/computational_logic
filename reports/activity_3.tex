@@ -414,8 +414,8 @@
 % in the abstract or keywords.
 \IEEEtitleabstractindextext{%
 \begin{abstract}
-Nesse relatório, criamos um simulador de autômato finito determinístico e 
-não-determinístico em Elixir.
+Nesse relatório, criamos um simulador de autômatos finitos determinísticos e 
+não-determinísticos em Elixir.
 \end{abstract}
 
 % Note that keywords are not normally used for peerreview papers.
@@ -481,18 +481,18 @@ Um autômato finito determinístico \textit{M} é definido como:
   M = (Q, \Sigma, \delta, q_0, F)
 \end{equation}
 onde \textit{Q} é o conjunto de estados,
-$\Sigma$ o alfabeto de entrada ($\epsilon \notin \Sigma$),
-$\delta$ a função de transição de estados,
-$q_0$ o estado inicial, e 
-\textit{F} o conjunto de estados de aceitação.
+$\Sigma$ é o alfabeto de entrada ($\epsilon \notin \Sigma$),
+$\delta$ é a função de transição de estados,
+$q_0$ é o estado inicial, e 
+$F$ é o conjunto de estados de aceitação.
 
 A função de transição de estados é da forma:
 \begin{equation}
   \delta(q, x) = q'
 \end{equation}
 
-Ela indica que se o estado atual for \textit{q} e o símbolo de entrada 
-\textit{x}, o próximo estado é \textit{q'}. Visualmente, podemos representar
+Ela indica para dados estado atual \textit{q} e símbolo de entrada 
+\textit{x}, o próximo estado será \textit{q'}. Visualmente, podemos representar
 essa transição por:
 
 \begin{figure}[!h]
@@ -528,23 +528,26 @@ autômato finito determinístico que define a mesma linguagem \cite{nda}.
 \section{Desenvolvimento}
 Usamos a linguagem de programação Elixir para desenvolver o algoritmo. Por se
 tratar de uma linguagem funcional, escrevemos os \textit{loops} como recursões
-de cauda. Utilizamos várias funções da biblioteca padrão Enum, como map/2,
-sort/1, filter/2, all?/2, count/1, dentre outras. Essas funções foram muito
+de cauda. Utilizamos várias funções da biblioteca padrão \texttt{Enum}, como
+\texttt{map/2}, \texttt{reduce/3}, \texttt{sort/1}, \texttt{filter/2},
+\texttt{all?/2}, \texttt{count/1}, dentre outras. Essas funções foram muito
 úteis para manipular dados em listas e simplificaram bastante o código.
 
 \subsubsection{Modelagem}
-Ao longo do nosso programa, os autômatos são representados por uma lista
-composta por uma função de transição, um estado inicial e estados de aceitação.
-As transições são representadas por tuples. Transições com $\epsilon$ são
-representadas por \textit{nil}. As cadeias são representadas por listas. Uma
-cadeia vazia é representada por uma lista vazia.
+Ao longo do nosso programa, os autômatos são representados por uma estrutura
+\texttt{\%Automaton\{\}} composta por uma função de transição, um estado inicial e
+estados de aceitação. As transições são representadas por tuplas de três
+elementos: estado atual, símbolo de entrada e próximo estado. Transições com
+$\epsilon$ são representadas pelo símbolo \textit{nil}. As cadeias são
+representadas por listas de símbolos. Uma cadeia vazia é representada por uma
+lista vazia.
 
-As duas funções principais do nosso programa são dfa\_generates\_word/2 e 
-nfa\_generates\_word/2. A primeira retorna se uma dada cadeia pertence a
-linguagem gerada por um autômato determinístico finito dado. A segunda faz a
-mesma coisa mas para um autômato não-determinístico. Ela faz uso internamente da
-função convert\_nfa\_to\_dfa/1, que recebe um autômato não-determinístico finito
-e o converte para um determinístico.
+As duas funções principais do nosso programa são \texttt{dfa\_generates\_word?/2}
+e \texttt{nfa\_generates\_word?/2}. A primeira retorna se uma dada cadeia
+pertence a linguagem gerada por um autômato determinístico finito dado. A
+segunda faz a mesma coisa mas para um autômato não-determinístico. Ela faz uso
+internamente da função \texttt{convert\_nfa\_to\_dfa/1}, que recebe um autômato
+não-determinístico finito e o converte para um determinístico.
 
 
 \subsubsection{Algoritmo}
@@ -557,44 +560,54 @@ símbolo da cadeia de entrada.
 \item Repetir esse processo até consumir toda a cadeia
 \item Verificar se o estado final é um estado de aceitação.
 \end{enumerate}
-Para o caso de autômatos finitos não-determinísticos, primeiramente os convertemos em
-determinísticos e em seguida aplicamos o algoritmo mostrado acima.
 
-Para converter o autômato finito não-determinístico em determinístico, aplicamos o
-seguinte algoritmo:
+Devido à simplicidade deste algoritmo e que cada passo é determinado apenas pelos
+valores atuais, utilizamos uma função \texttt{Enum.reduce/3} para realizar o
+cálculo do estado final.
+
+Para o caso de autômatos finitos não-determinísticos, primeiramente os convertemos
+em determinísticos e em seguida aplicamos o algoritmo mostrado acima.
+
+Para converter o autômato finito não-determinístico em determinístico, aplicamos
+o seguinte algoritmo:
 
 \begin{enumerate}
 \item Determinar o alfabeto a partir das transições do autômato 
-não-determinístico.
+não-determinístico, ignorando transições vazias \texttt{nil}.
 \item Calcular $\delta^*(q_0, \epsilon) = \{q_0, K\}$, ou seja a função de 
 transição de estado estendida para o estado inicial e a cadeia vazia. 
 $\{q_0, K\}$ será o estado inicial do autômato determinístico.
+\item Localizar nas novas regras de transição os estados que podem ser
+alcançados e ainda não foram considerados.
 \item Para cada estado $\{q_i, q_j, ..., q_m\}$, calcular $\delta^*(q_i, a) \cup
 \delta^*(q_j, a) \cup ... \cup \delta^*(q_m, a) = \{q'_k, q'_l, ..., q'_n\}$, e
 adicionar nas regras de transição.
-\item Repetir para cada estado do autômato determinístico e símbolos do
-alfabeto até não haver mais estados a serem adicionados no autômato
-determinístico.
-\item Para cada estado $\{q_i, q_j, ..., q_m\}$, ele será um estado de aceitação
-se algum $q_j$ no autômato não-determinístico for de aceitação.
+\item Repetir os passos 3 e 4 para cada estado do autômato determinístico do
+lado direito das transições e símbolos do alfabeto, até não haver mais estados a
+serem adicionados no autômato determinístico.
+\item Para cada estado $\{q_i, ..., q_j, ..., q_m\}$, ele será um estado de
+aceitação se algum $q_j$ no autômato não-determinístico for de aceitação.
 \end{enumerate}
 
 Outra alternativa para simular um autômato finito não-determinístico seria
 calcular todos os possíveis estados finais para a cadeia de entrada, e em
 seguida verificar se algum deles é um estado de aceitação. Esse processo é
-mais complexo do que no caso determinístico. Sendo assim, avaliamos que é mais
-eficiente fazer um pré-processamento na forma de 
-converter o autômato finito não-determinístico para determinístico, e então
-todas as cadeias a serem analisadas para aquele autônomo podem usar um algoritmo
-mais rápido.
+mais complexo do que no caso determinístico.
+
+Sendo assim, avaliamos que é mais prático de um ponto de desenvolvimento fazer
+um pré-processamento na forma de converter o autômato finito não-determinístico
+para determinístico, e então todas as cadeias a serem analisadas para aquele
+autômato podem usar o algoritmo já desenvolvido.
 
 \subsubsection{Testes}
 Realizamos três tipos de testes. No primeiro, verificamos se o autômato
 determinístico aceita apenas as cadeias pertencentes à linguagem definida por
-ele, no caso, a linguagem da expressão regular $a^*|(a^*b^*c^*)^*$. Repetimos esse 
-teste para um autômato não-determinístico que aceita cadeias da linguagem
-definida por $0^*|(01)^*$. No último teste, verificamos se a função de conversão
-de autômato não-determinístico para determinístico funciona corretamente.
+ele, no caso, a linguagem da expressão regular $a^*|(a^*b^*c^*)^*$. Repetimos
+esse teste para um autômato não-determinístico que aceita cadeias da linguagem
+definida por $0^*|(01)^*$. No último teste, utilizando o conceito de testes
+baseados em propriedades, verificamos se a função de conversão de autômato
+não-determinístico para determinístico funciona corretamente -- isto é, se os
+resultados do autômato não-determinístico são idênticos aos do determinístico.
 
 \section{Resultados}
 Os testes realizados bateram com o esperado, de acordo com a especificação do 
@@ -604,15 +617,18 @@ não-determinísticos para autômatos determinísticos também funcionou
 corretamente.
 
 \section{Conclusão}
-Esse  exercício programa nos permitiu ampliar e desenvolver nossos conceitos
+Esse exercício programa nos permitiu ampliar e desenvolver nossos conceitos
 em matemática discreta sobre gramáticas, autômatos e pela linguagem Elixir,
-melhorar nossos conhecimentos de programação funcional.
-Quanto ao programa desenvolvido, avaliamos que conseguimos simular o
-funcionamento de autômatos finitos de forma eficiente e precisa. Os testes que
-criamos nos deram confiança a respeito da corretude do algoritmo implementado.
-Observamos também que o algoritmo para simular um autômato finito determinístico
-é bastante simples. Sua implementação foi facilitada pelos recursos de linguagem
-funcional do Elixir. 
+melhorar nossos conhecimentos de programação funcional. Quanto ao programa
+desenvolvido, avaliamos que conseguimos simular o funcionamento de autômatos
+finitos de forma precisa. Porém, para melhor eficiência, o ideal seria deixar
+a conversão de autônomo não-determinístico para determinístico na mão do
+usuário, para evitar o recálculo do autômato determinístico equivalente para
+cada cadeia nova a ser testada. Mesmo assim, os testes que criamos nos deram
+confiança a respeito da corretude do algoritmo implementado. Observamos também
+que o algoritmo para simular um autômato finito determinístico é bastante
+simples. Sua implementação foi facilitada pelos recursos de linguagem
+funcional do Elixir.
 
 
 % An example of a floating figure using the graphicx package.
@@ -816,7 +832,7 @@ funcional do Elixir.
   %H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
   %  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
   
- \end{thebibliography}
+\end{thebibliography}
   
   % biography section
 % 
