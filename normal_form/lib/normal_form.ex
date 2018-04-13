@@ -12,25 +12,12 @@ defmodule NormalForm do
   defstruct [:start, :rules, :terms, :nonterms]
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> NormalForm.hello
-      :world
-
-  """
-  def hello do
-    :world
-  end
-
-  @doc """
-  Given a context-free grammar, convert it to a grammar in Chomsky normal form.
+  Given a context-free grammar, convert it to a Chomsky normal form grammar.
 
   ## Parameters
-    - start: the start non-terminal for the grammar
-    - rules: the list of tuples representing grammar rules
-    - terms: the list of atoms representing terminals of the grammar
+    - start: an element representing the start non-terminal for the grammar
+    - rules: a list of tuples representing grammar rules
+    - terms: a list of elements representing terminals of the grammar
 
   """
   def change_to_normal_form(start, rules, terms) do
@@ -50,11 +37,90 @@ defmodule NormalForm do
     # --- 5th step: Eliminate unit rules
     unit_rules = get_unit(del_rules, terms, new_start)
 
+    # --- Extra step: Remove duplicated start
+    # This may happen for non empty-word generating language
+    nondupe_rules = get_nondupe(unit_rules, new_start)
+
     %NormalForm{
       start: new_start,
-      rules: unit_rules,
+      rules: nondupe_rules,
       terms: terms,
-      nonterms: Enum.uniq(Enum.map(unit_rules, fn(x) -> elem(x, 0) end))}
+      nonterms: Enum.uniq(Enum.map(nondupe_rules, fn(x) -> elem(x, 0) end))}
+  end
+
+  @doc """
+  Given a Chomsky normal form grammar and a word, check if the grammar generates
+  the word.
+
+  ## Parameters
+    - start: a NormalForm struct representing a grammar
+    - word: a list of elements representing a word
+
+  """
+  def normal_form_grammar_generates_word?(grammar, word) do
+    # Algorithm:
+    #
+    # for i := 1 to n do N[i, i] := {xi}; all other N[i, j] are initially empty
+    # for s := 1 to n - 1 do
+    #   for i := 1 to n - s do
+    #     for k := i to i + s - 1 do
+    #       if there is a rule A -> BC in R with B in N[i, k] and C in N[k + 1, i + s]
+    #       then add A to N[i, i + s]
+    #   Accept x if S in N[1, n]
+    #
+    # -------------------------------------------------
+    #
+    # Special case for empty or one-letter word
+    n = Enum.count(word)
+    # For empty or one-symbol word, simply check if direct rule exists
+    if n <= 1 do
+      Enum.member?(grammar.rules, {grammar.start, word})
+    else
+      # Initialize the dynamic programming matrix
+      dp_matrix = Enum.reduce(Range.new(n, 1), [], fn(i, matrix) ->
+        [Enum.reduce(Range.new(n, 1), [], fn(j, line) ->
+          # Check if cell in diagonal
+          if i == j do
+            # Get {nonterm, [term]} rules to add to the diagonal of the matrix
+            [Enum.map(
+              Enum.filter(grammar.rules, fn(rule) ->
+                elem(rule, 1) == [Enum.at(word, i - 1)]
+              end), fn(r) -> elem(r, 0)
+            end) | line]
+          else [[] | line] end end) | matrix] end)
+      # Get the final DP matrix after successive loops
+      new_matrix =
+        # for s := 1 to n - 1 do
+        Enum.reduce(Range.new(1, n - 1), dp_matrix, fn(s, s_matrix) ->
+          # for i := 1 to n - s do
+          Enum.reduce(Range.new(1, n - s), s_matrix, fn(i, i_matrix) ->
+            # for k := i to i + s - 1 do
+            Enum.reduce(Range.new(i, i + s - 1), i_matrix, fn(k, matrix) ->
+              # Find rules that are applicable to the current symbol
+              applicable_rules = Enum.filter(grammar.rules, fn(rule) ->
+                case rule do
+                  # NT generating two NTs
+                  {_, [b, c]} ->
+                    Enum.member?(Enum.at(Enum.at(matrix, i - 1), k - 1), b) and
+                    Enum.member?(Enum.at(Enum.at(matrix, k), i + s - 1), c)
+                  # NT generating a terminal or empty word (skip rule)
+                  _ -> false
+                end
+              end)
+              # Add new nonterms to appropriate cell in matrix
+              List.update_at(matrix, i - 1, fn(line) ->
+                List.update_at(line, i + s - 1, fn(cell) ->
+                  Enum.uniq(cell ++ Enum.map(applicable_rules, fn(r) ->
+                    elem(r, 0)
+                  end))
+                end)
+              end)
+            end)
+          end)
+        end)
+      # Check if start symbol in [1, n]
+      Enum.member?(Enum.at(Enum.at(new_matrix, 0), n - 1), grammar.start)
+    end
   end
 
   defp create_new_atom(prefix, element, suffix) do
@@ -193,5 +259,30 @@ defmodule NormalForm do
       # No more unreachable nonterms; End recursion
       rules
     end
+  end
+
+  defp get_nondupe(rules, start) do
+    # Get start rules and rightsides
+    start_rules = Enum.filter(rules, fn(r) -> elem(r, 0) == start end)
+    start_rightsides = Enum.sort(Enum.map(start_rules, &(elem(&1, 1))))
+    # Get possible matches of rules
+    matching_rules = Enum.filter(rules, fn(r) ->
+      elem(r, 0) != start and Enum.member?(start_rightsides, elem(r, 1)) end)
+    matching_nonterms = Enum.uniq(Enum.map(matching_rules, &(elem(&1, 0))))
+    # Iterate over matching NTs
+    Enum.reduce(matching_nonterms, rules, fn(nt, acc) ->
+      # If all the NT rules match start rules, replace them
+      if Enum.sort(Enum.map(
+        Enum.filter(rules, &(elem(&1, 0) == nt)),
+      &(elem(&1, 1)))) == start_rightsides do
+        # Remove rules with NT in leftside and map remaining rules
+        Enum.map(Enum.filter(acc, &(elem(&1, 0) != nt)), fn(r) ->
+          # Change all instances of NT in rightside of all rules with start
+          {elem(r, 0), Enum.map(elem(r, 1), fn(element) ->
+            if element == nt do start else element end
+          end)}
+        end)
+      else acc end
+    end)
   end
 end
