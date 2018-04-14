@@ -63,8 +63,6 @@ defmodule NormalFormTest do
 
     # -- Get and check S
     s = grammar.start
-    # S generates empty word
-    assert Enum.count(Enum.filter(grammar.rules, &(elem(&1, 1) == [] and elem(&1, 0) == s))) == 1
     # S is nonterm
     assert Enum.member?(grammar.nonterms, s)
     # S has two rules
@@ -86,10 +84,6 @@ defmodule NormalFormTest do
     assert Enum.member?(grammar.nonterms, b)
     # B generates two rules
     assert Enum.count(Enum.filter(grammar.rules, &(elem(&1, 0) == b))) == 2
-    # A generates :a
-    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {a, [:a]}))) == 1
-    # B generates :a
-    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {b, [:a]}))) == 1
 
     # -- Get and check C
     b_ac_list = Enum.filter(grammar.rules, &(elem(&1, 0) == b and elem(&1, 1) != [:a]))
@@ -104,7 +98,13 @@ defmodule NormalFormTest do
     assert Enum.member?(grammar.nonterms, c)
     # C generates one rule
     assert Enum.count(Enum.filter(grammar.rules, &(elem(&1, 0) == c))) == 1
-    # C generates AB
+
+    # -- Final check for every rule
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {s, []}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {s, [a, b]}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {a, [:a]}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {b, [a, c]}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {b, [:a]}))) == 1
     assert Enum.count(Enum.filter(grammar.rules, &(&1 == {c, [a, b]}))) == 1
   end
 
@@ -190,8 +190,6 @@ defmodule NormalFormTest do
     assert Enum.member?(grammar.nonterms, b)
     # B generates one rule
     assert Enum.count(Enum.filter(grammar.rules, &(elem(&1, 0) == b))) == 1
-    # B generates :b
-    assert Enum.count(Enum.filter(grammar.rules, &(elem(&1, 0) == b and elem(&1, 1) == [:b]))) == 1
 
     # -- Get and check A
     s_ac_list = Enum.filter(grammar.rules, &(elem(&1, 0) == s and Enum.at(elem(&1, 1), 1) == c))
@@ -204,12 +202,13 @@ defmodule NormalFormTest do
     assert Enum.member?(grammar.nonterms, a)
     # A generates one rule
     assert Enum.count(Enum.filter(grammar.rules, &(elem(&1, 0) == a))) == 1
-    # A generates :a
-    assert Enum.count(Enum.filter(grammar.rules, &(elem(&1, 0) == a and elem(&1, 1) == [:a]))) == 1
-    # Two rules generate A as first element
-    assert Enum.count(Enum.filter(grammar.rules, &(Enum.at(elem(&1, 1), 0) == a))) == 2
-    # No rules generate A as second element
-    assert Enum.count(Enum.filter(grammar.rules, &(Enum.at(elem(&1, 1), 1) == a))) == 0
+    
+    # -- Final check for every rule
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {s, [a, b]}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {s, [a, c]}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {a, [:a]}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {b, [:b]}))) == 1
+    assert Enum.count(Enum.filter(grammar.rules, &(&1 == {c, [s, b]}))) == 1
   end
 
   # Verify that we can identify words for a CNF regular grammar
