@@ -52,6 +52,8 @@
 
 \documentclass[journal,transmag]{IEEEtran}
 \usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{listings}
 \usetikzlibrary{automata,positioning}
 %
 % If IEEEtran.cls has not been installed into the LaTeX system files,
@@ -487,16 +489,91 @@ lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
 
 
 \subsubsection{Algoritmo}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+O algoritmo desenvolvido para converter uma gramática de LLC para a Forma Normal
+de Chomsky se baseou em \cite{wikipedia} e segue os seguintes passos:
+
+\begin{enumerate}
+\item START: Introduzir um novo não-terminal inicial $S_0$, que gera o
+não-terminal anterior.
+\item TERM: Transformar regras com lado direito de comprimento $> 1$ com pelo
+menos um terminal em regras apenas com não-terminais. Para cada terminal
+substituído, adicionamos uma regra tal que o novo não-terminal gere o terminal. 
+\item BIN: Transformar regras que geram mais de dois não-terminais em várias
+regras em sequência, com novos não-terminais que indicam esta sequência.
+\item DEL: Remover regras que geram cadeia vazia. Para isso, nas regras em que o
+não-terminal que gera vazioestá do lado direito, além das regras que geram tal
+não-terminal, deve haver outra regra que não inclui este não-terminal,
+apagando-o do lado direito em cada cópia de tal regra. Como este processo pode
+gerar novos não-terminais gerando cadeia vazia, ele é realizado iterativamente
+até o não-terminal inicial $S_0$, que é o único permitido para gerar cadeias
+vazias.
+\item UNIT: Todas as regras do último passo que geram apenas um não-terminal
+devem ter substituição diretamente para o não-terminal do lado esquerdo ter 
+todas as regras em que o não-terminal aparece do lado esquerdo de outras regras.
+Dessa forma, certos não-terminais que se tornam inúteis terão que ser eliminados
+iterativamente (i.e. podem gerar mais não-terminais inúteis). A identificação
+de não-terminais inúteis se dará pela verificação de não-terminais que não podem
+ser atingidos por nenhuma regra após esta substituição.
+\item Adicionalmente, pode ser que $S_0$ e o não-terminal inicial original gerem
+exatamente as mesmas regras, por exemplo quando não há geração de cadeias
+vazias; neste caso, precisamos de um passo a mais para eliminar o não-terminal
+inicial e substituir suas regras pelo novo início $S_0$.
+\end{enumerate}
+
+Em termos de implementação, foi elaborado um algoritmo independente para cada
+etapa, que será aplicado nas regras de produção e parâmetros extras necessários
+para cada uma.
+
+Para a segunda parte deste exercício, utilizamos a referência em \cite{livro}
+para a elaboração de um algoritmo em programação dinâmica, que usa uma tabela
+$N$ onde os elementos $N[i, i] | 1 \leq i \leq n, n = \left|x\right|$ são
+pré-populados com os não-terminais que podem gerar o terminal na posição $i$ da
+palavra $x$ a ser comparada. O algoritmo determina os seguintes passos dado
+não-terminal inicial $S_0$:
+
+\begingroup
+\fontsize{8pt}{12pt}\selectfont
+\begin{lstlisting}[mathescape=true]
+Para $s$ $:=$ [1, n-1]
+  Para i $:=$ [1, n-s]
+    Para k $:=$ [i, i+s-1]
+      Se existe uma regra (A $\rightarrow$ BC) $\in$ R
+      $|$ B $\in$ N[i, k], C $\in$ N[k+1, i+s]
+        Adicione A em N[i, i+s]
+Aceite $x$ se $S_0$ $\in$ N[1, n]
+\end{lstlisting}
+\endgroup
+
+A implementação foi feita aproveitando-se os recursos funcionais de Elixir, como
+\texttt{Enum.reduce}, como alternativa para os loops.
 
 \subsubsection{Testes}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+Para este exercício, utilizamos dois testes para cada uma das funções
+elaboradas. Destes dois testes, utilizamos duas linguagens livres de contexto
+diferentes, sendo uma delas também uma linguagem regular, e tendo apenas uma
+delas gerando uma cadeia vazia. Desta forma, podemos encontrar possíveis erros
+de implementação para cadeias vazias nestas funções.
+
+Para a função
+\texttt{NormalForm.change\allowbreak\_to\allowbreak\_normal\allowbreak\_form/3},
+realizamos os testes tais que apenas a estrutura da gramática deveria estar
+correta, i.e. devem permitir que os não-terminais gerados possuam qualquer nome.
+Dessa forma, ele varre as regras e verifica as propriedades das gramáticas
+geradas conforme a forma normal esperada. Para estes testes, utilizamos as
+linguagens $(aa)^*$ e $a^n b^n | n \geq 1$.
+
+Já nos testes de
+\texttt{NormalForm.normal\allowbreak\_form\allowbreak\_grammar\allowbreak\_generates\allowbreak\_word?/2},
+dada uma gramática já na forma normal, verificamos diferentes cadeias que devem
+ou não ser aceitas por aquela gramática, comparando os resultados obtidos. Os
+testes foram realizados para as linguagens $a(ab)^*$ e de parênteses
+equilibrados.
 
 \section{Resultados}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+Os testes realizados bateram com o esperado, de acordo com a especificação do 
+exercício. Assim, o algoritmo foi capaz de gerar corretamente gramáticas na
+Forma Normal de Chomsky. A função de verificação de cadeias para gramáticas na
+forma normal, através de programação dinâmica, também funcionou corretamente.
 
 \section{Conclusão}
 Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
@@ -673,31 +750,37 @@ lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
   \bibitem{functional}
   FORD,~Neal.
   \emph{Functional Thinking}.
-  Disponível em: https://www.infoq.com/presentations/Functional-Thinking.
+  Disponível em: \url{https://www.infoq.com/presentations/Functional-Thinking}.
   Acesso em 7 de fevereiro de 2018.
   
   \bibitem{introduction}
   Elixir.
   \emph{Introduction}.
-  Disponível em: https://elixir-lang.org/getting-started/introduction.html.
+  Disponível em: \url{https://elixir-lang.org/getting-started/introduction.html}.
   Acesso em 7 de fevereiro de 2018.
   
   \bibitem{enum}
   Elixir.
   \emph{Enum}.
-  Disponível em: https://hexdocs.pm/elixir/Enum.html
+  Disponível em: \url{https://hexdocs.pm/elixir/Enum.html}.
   Acesso em 24 de fevereiro de 2018.
   
   \bibitem{structs}
   Elixir.
   \emph{Structs}.
-  Disponível em: https://elixir-lang.org/getting-started/structs.html
+  Disponível em: \url{https://elixir-lang.org/getting-started/structs.html}.
   Acesso em 22 de março de 2018.
+
+  \bibitem{wikipedia}
+  Wikipedia, The Free Encyclopedia.
+  \emph{Chomsky Normal Form}.
+  Disponível em: \url{https://en.wikipedia.org/wiki/Chomsky_normal_form}.
+  Acesso em 31 de março de 2018.
 
   \bibitem{list}
   Elixir.
   \emph{List}.
-  Disponível em: https://hexdocs.pm/elixir/List.html
+  Disponível em: \url{https://hexdocs.pm/elixir/List.html}.
   Acesso em 03 de abril de 2018.
 
   \bibitem{livro}
