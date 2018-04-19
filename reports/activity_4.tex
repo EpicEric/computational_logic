@@ -495,13 +495,25 @@ sejam recalculadas na recursão. Essa tabela é a base do algoritmo de programa�
 dinâmica e é essencial para sua eficiência.
 
 \section{Desenvolvimento}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
-
+Usamos a linguagem de programação Elixir para desenvolver o algoritmo. 
+Utilizamos várias funções da biblioteca padrão \texttt{Enum}, como
+\texttt{map/2}, \texttt{reduce/3}, \texttt{sort/1}, \texttt{filter/2},
+\texttt{member?/2}, \texttt{count/1}, dentre outras. Essas funções foram muito
+úteis para manipular dados em listas e simplificaram bastante o código.
 \subsubsection{Modelagem}
-Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
-lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+No nosso programa, as gramáticas livres de contexto em forma normal de Chomsky
+são representadas por uma \textit{struct} com quatro parâmetros: um não-terminal inicial, uma lista de 
+tuplas que representa a gramática, uma lista de atoms que representa os
+terminais, e uma lista de atoms que representa os não-terminais. As cadeias são
+representadas por listas de atoms.
 
+As duas funções principais do nosso programa são 
+\texttt{change\_to\_normal\_form?/3} e 
+\texttt{normal\_form\_grammar\_generates\_word?/2}. A primeira recebe o
+não-terminal inicial, a lista de regras e a lista de terminais da gramática,
+e retorna a gramática descrita na Forma Normal de Chomsky. A segunda recebe 
+uma gramática escrita na Forma Normal de Chomsky, uma cadeia, e retorna \textit{true} se 
+a cadeia faz parte da gramática e \textit{false} caso contrário.
 
 \subsubsection{Algoritmo}
 O algoritmo desenvolvido para converter uma gramática de LLC para a Forma Normal
