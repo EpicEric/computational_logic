@@ -476,8 +476,23 @@ Chomsky, programação dinâmica.
 % 
 % Here we have the typical use of a "T" for an initial drop letter
 % and "HIS" in caps to complete the first word.
-\IEEEPARstart{L}{orem} ipsum dolor sit amet lorem ipsum dolor sit amet lorem
-ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet.
+\IEEEPARstart{N}{este} exercício, tivemos como objetivo implementar um algoritmo
+para converter uma gramática de uma linguagem livre de contexto (LLC) qualquer
+para a Forma Normal de Chomsky e reconhecer cadeias de LLC a partir da gramática
+descrita em Forma Normal de Chomsky usando programação dinâmica.
+
+Na Forma Normal de Chomsky, o lado direito de toda regra de uma gramática livre
+de contexto deve ter, no máximo, comprimento 2. Devido a isso,
+gramáticas nessa forma não podem produzir cadeias com comprimento menor que 2.
+Entretanto, com exceção dessa limitação, é possível provar que toda gramática
+livre de contexto pode ser escrita na Forma Normal de Chomsky \cite{livro}.
+
+Gramáticas descritas na Forma Normal de Chomsky podem ser reconhecidas
+facilmente com um algoritmo de programação dinâmica, que será explicado na seção
+``Algoritmo''. No paradigma de programação dinâmica, sub-instâncias do problema
+são resolvidas recursivamente e armazenadas em uma tabela, a fim de evitar que 
+sejam recalculadas na recursão. Essa tabela é a base do algoritmo de programação
+dinâmica e é essencial para sua eficiência.
 
 \section{Desenvolvimento}
 Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet
