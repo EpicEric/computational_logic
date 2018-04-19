@@ -5,8 +5,8 @@ defmodule NormalForm do
   A Normal Form grammar struct requires four parameters:
     - start: the start non-terminal for the grammar
     - rules: the list of tuples representing grammar rules
-    - terms: the list of atoms representing terminals of the grammar
-    - nonterms: the list of atoms representing non-terminals of the grammar
+    - terms: the list of elements representing terminals of the grammar
+    - nonterms: the list of elements representing non-terminals of the grammar
   """
   @enforce_keys [:start, :rules, :terms, :nonterms]
   defstruct [:start, :rules, :terms, :nonterms]

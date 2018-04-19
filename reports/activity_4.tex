@@ -503,9 +503,9 @@ Utilizamos várias funções da biblioteca padrão \texttt{Enum}, como
 \subsubsection{Modelagem}
 No nosso programa, as gramáticas livres de contexto em forma normal de Chomsky
 são representadas por uma \textit{struct} com quatro parâmetros: um não-terminal inicial, uma lista de 
-tuplas que representa a gramática, uma lista de atoms que representa os
-terminais, e uma lista de atoms que representa os não-terminais. As cadeias são
-representadas por listas de atoms.
+tuplas que representa a gramática, uma lista de símbolos que representa os
+terminais, e uma lista de símbolos que representa os não-terminais. As cadeias
+são representadas por listas de símbolos.
 
 As duas funções principais do nosso programa são 
 \texttt{change\_to\_normal\_form?/3} e 
